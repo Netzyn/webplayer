@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netzyn</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            overflow-y: scroll;
+            background-color: #000;
+        }
+
+        .splash-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: #01203a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .splash-screen img {
+            width: 100%;
+            height: auto;
+        }
+
+        .top-bar {
+            width: 100%;
+            height: 50px;
+            background-color: #000;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            padding-left: 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            font-size: 25px;
+        }
+
+        .container {
+            width: 100%;
+            max-height: 100vh;
+            padding-top: 47px;
+            display: none;
+        }
+
+        .box {
+            width: 95%;
+            height: 120px;
+            margin: 5px auto;
+            background-color: #01203a;
+            display: flex;
+            align-items: center;
+            border-radius: 5px;
+            border: 1px solid #8ba1d9;
+            box-sizing: border-box;
+            color: #fff;
+            font-weight: 300;
+        }
+
+        .box img {
+            width: 108px;
+            height: 108px;
+            padding: 5px 0px 5px 5px;
+        }
+
+        .box span {
+            font-size: 12px;
+            font-weight: 300;
+        }
+
+        .hr {
+            width: 85%;
+            margin: 10px auto;
+            border: none;
+            border-top: 0.5px solid #2f302f;
+        }
+
+        .details {
+            width: 100%;
+            padding: 10px 10px 10px 5px;
+        }
+
+        .reviews {
+            font-size: 16px !important;
+        }
+
+        .stars {
+            font-size: 16px !important;
+            color: #f99109;
+            float: right;
+        }
+
+        .app-name {
+            text-align: left;
+            font-size: 14px;
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+
+        .company {
+            text-align: left;
+            font-size: 11px;
+            color: rgb(104, 109, 112);
+        }
+
+        .downloads-buttons {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+        }
+
+        .downloads {
+            font-size: 14px;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 6px;
+        }
+
+        .button {
+            padding: 5px 10px;
+            font-size: 14px;
+            color: #fff;
+            background-color: #4fbb6c;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            float: right;
+        }
+
+        .button:hover {
+            background-color: #627d76;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Splash Screen -->
+    <div class="splash-screen" id="splashScreen">
+        <img src="./assets/netzyn_sc.png" alt="Splash Screen">
+    </div>
+
+    <!-- Top bar -->
+    <div class="top-bar">TRY THE GAMES  <button class="button" style="margin-left: 10px;background-color: red;" onclick="console.log('Clear Called'); localStorage.clear();"> Clear</button></div>
+
+    <!-- Container for boxes -->
+    <div class="container" id="boxContainer"></div>
+
+    <script>
+        // Base URL for fetching app icons
+        const baseURL = "https://nzos.netzyn.com/files/apps/";
+//        const baseURL = "../apps/";
+
+        let authId      = new URLSearchParams(window.location.search).get("auth_id");
+        if(authId == null || authId == "")
+            authId = "get auth_id from Netzyn and put here";
+        
+        // get the operating system
+        function getMobileStoreUrlKey() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+
+            // Windows Phone must come first because its UA also contains "Android"
+            // if (/windows phone/i.test(userAgent)) {
+            //     return "windows phone";
+            // }
+
+            if (/android/i.test(userAgent)) {
+                return "storeand";
+            }
+
+            if (/iPad|iPhone|iPod/i.test(userAgent)) {
+                return "storeios";
+            }
+
+            return "storeand";
+        }
+
+        //------------------------------------------------------------------------------
+        // renderApp
+        //! Fetch JSON data for specified app and render it
+        //!
+        //! @param [in] app     App
+        //------------------------------------------------------------------------------
+        async function renderApp(app)
+        {
+            fetch(baseURL + app + ".json")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })  
+                .then(data => {
+                    // Work with the JSON data here
+                    //console.log("App json : ", data);
+                    const container = document.getElementById("boxContainer");
+
+
+                    const box = document.createElement("div");
+                    box.className = "box";
+
+                    const img = document.createElement("img");
+                    img.src = `${baseURL}${app}.png`;
+                    img.alt = `${app} icon`;
+
+                    const textDiv = document.createElement("div");
+
+                    const details = document.createElement("div");
+                    details.className = "details";
+
+                    if("reviews" in data)
+                    {
+                        const reviews = document.createElement("span");
+                        reviews.className = "reviews";
+                        reviews.textContent = `${data.reviews} reviews`;
+                        details.appendChild(reviews);
+                    }
+
+                    if("stars" in data)
+                    {
+                        const stars = document.createElement("span");
+                        stars.className = "stars";
+                        const starRating = parseFloat(data.stars) || 0;
+                        stars.innerHTML = "★".repeat(Math.round(starRating)) + "☆".repeat(5 - Math.round(starRating)) + ` ${starRating.toFixed(1)}`;
+                        details.appendChild(stars);
+                    }
+
+                    if("name" in data)
+                    {
+                        // Add app name
+                        const appName = document.createElement("div");
+                        appName.className = "app-name";
+                        appName.textContent = data.name;
+                        details.appendChild(appName);
+                    }
+
+
+                    if("company" in data)
+                    {
+                        // Add company
+                        const company = document.createElement("div");
+                        company.className = "company";
+                        company.textContent = data.company;
+                        details.appendChild(company);
+                    }
+
+                    // Add downloads and buttons
+                    const downloadsButtons = document.createElement("div");
+                    downloadsButtons.className = "downloads-buttons";
+
+                    if("downloads" in data)
+                    {
+                        const downloads = document.createElement("span");
+                        downloads.className = "downloads";
+                        downloads.textContent = data.downloads;
+                        downloadsButtons.appendChild(downloads);
+                    }
+
+                    const buttons = document.createElement("div");
+                    buttons.className = "buttons";
+
+                    let storeand;
+                    let storeios;
+                    if("storeand" in data)
+                        storeand = data.storeand;
+
+                    if("storeios" in data)
+                        storeios = data.storeios;
+
+
+                    if("storeand" in data || "storeios" in data)
+                    {
+                        const installButton = document.createElement("button");
+                        installButton.className = "button";
+                        installButton.textContent = "Install";
+                        installButton.onclick = () => window.open(getMobileStoreUrlKey() === "storeand" ? storeand : storeios, "_blank");
+
+                        buttons.appendChild(installButton);
+                    }
+
+                    let orient="P";
+                    if("orient" in data)
+                        orient = data.orient;
+                    else if(app.includes("_L"))
+                        orient = "L";
+
+
+                    const tryNowButton = document.createElement("button");
+                    tryNowButton.className = "button";
+                    tryNowButton.textContent = "Try Now";
+                    tryNowButton.onclick = () => window.location.href = `pre_applaunch.html?app=${encodeURIComponent(app)}&orient=${orient}&auth_id=${authId}&install=${getMobileStoreUrlKey() === "storeand" ? storeand : storeios}`;
+
+                    buttons.appendChild(tryNowButton);
+
+                    downloadsButtons.appendChild(buttons);
+                    details.appendChild(downloadsButtons);
+
+                    // Append the image and details to the box
+                    box.appendChild(img);
+                    box.appendChild(details);
+
+                    // Append the box to the container
+                    container.appendChild(box);
+
+                    // Add a horizontal line between boxes
+                    const br = document.createElement("hr");
+                    br.className = "hr";
+                    container.appendChild(br);
+
+                })
+                .catch(error => {
+                    // Handle errors
+                    console.error('There was a problem with the fetch operation:', error);
+                    });            
+        }
+
+        //------------------------------------------------------------------------------
+        // renderDynamicApps
+        //! Render apps dynamically.
+        //!     Fetch list of apps as a CSV
+        //!         For each app in CSV get app json data
+        //------------------------------------------------------------------------------
+        async function renderDynamicApps()
+        {
+            // get list of apps
+            fetch(baseURL + "qwerty")
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.text();
+                })
+                .then(text => {
+                    //console.log('Text content:', text);
+                    let csv = text.split(',');
+                    //console.log('csv array all elements :', csv);
+
+                    //console.log('arr len:', csv.length);
+                    for (let i = 0; i < csv.length; i++) {
+                        //console.log("cur index " + i);
+                        //console.log(i+ " :: " + csv[i]);
+                        renderApp(csv[i]);
+                    }
+                })
+                .catch(error => {
+                    console.error('There was a problem fetching the app list:', error);
+            }); 
+        }
+
+        //------------------------------------------------------------------------------
+        // renderStaticApps
+        //! DEBUG!!!
+        //! Render apps from a const array of apps (data mirrors app's JSON data)
+        //------------------------------------------------------------------------------
+        async function renderStaticApps() {
+            const container = document.getElementById("boxContainer");
+
+            try {
+                const apps = [
+                    {
+                        // some random values
+                        "stars": "4.7",
+                        "downloads": "1B+ Installs",
+                        "apptype": "Game",
+                        "company": "Games",
+                        "reviews": "41.5M",
+
+                    	"name":"Draw",
+                    	"orient":"P",
+                    	"time1":"4",
+                    	"Time2":"0",
+                    	"storeand":"https://play.google.com/store/apps/details?id=com.simplemobiletools.draw",
+                    	"storeios":"",
+                        "url": "draw"
+                    },
+                    {
+                        "stars": "4.6",
+                        "downloads": "1B+ Installs",
+                        "apptype": "Game",
+                        "company": "SYBO Games",
+                        "reviews": "41.5M",
+                        "name": "Subway Surfers",
+                        "orient": "P",
+                        "time1": "4",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.kiloo.subwaysurf",
+                        "storeios": "https://apps.apple.com/gb/app/subway-surfers/id512939461",
+                        "url": "subwaysurfer"
+                    },
+                    {
+                        "stars": "4.4",
+                        "downloads": "10M+ Installs",
+                        "apptype": "Car Racing Game",
+                        "company": "Aquiris Game Studio",
+                        "reviews": "1M",
+                        "name": "Horizon Chase",
+                        "orient": "L",
+                        "time1": "2",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.aquiris.horizonchase",
+                        "storeios": "https://apps.apple.com/us/app/horizon-chase/id991018252",
+                        "url": "horizonchase"
+                    },
+                    {
+                        "stars": "4.6",
+                        "downloads": "1B+ Installs",
+                        "apptype": "King",
+                        "company": "King",
+                        "reviews": "37.2M",
+                        "name": "Candy Crush",
+                        "orient": "P",
+                        "time1": "2",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.king.candycrushsaga",
+                        "storeios": "https://apps.apple.com/us/app/candy-crush-saga/id553834731",
+                        "url": "candycrush"
+                    },
+                    {
+                        "stars": "4.5",
+                        "downloads": "500k+ Installs",
+                        "apptype": "Game",
+                        "company": "FlowPlay, LLC",
+                        "reviews": "4.84K",
+                        "name": "Casino World",
+                        "orient": "P",
+                        "time1": "4",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.casinoworld",
+                        "storeios": "https://apps.apple.com/us/app/casino-world-slots-rewards/id1578335719",
+                        "url": "casinoworld"
+                    },
+                    {
+                        "stars": "4.9",
+                        "downloads": "10M+ Installs",
+                        "apptype": "Game",
+                        "company": "Gamo Vation",
+                        "reviews": "566K",
+                        "name": "Chess",
+                        "orient": "P",
+                        "time1": "4",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.gamovation.chessclubpilot",
+                        "storeios": "https://apps.apple.com/us/app/chess-offline-board-game/id1591188795",
+                        "url": "chess"
+                    },
+                    {
+                        "stars": "4.7",
+                        "downloads": "100M+ Installs",
+                        "apptype": "Game",
+                        "company": "Moon Active",
+                        "reviews": "9.73M",
+                        "name": "Coin Master",
+                        "orient": "P",
+                        "time1": "4",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.moonactive.coinmaster",
+                        "storeios": "https://apps.apple.com/us/app/coin-master/id406889139",
+                        "url": "coinmaster"
+                    },
+                    {
+                        "stars": "4.7",
+                        "downloads": "10M+ Installs",
+                        "apptype": "Game",
+                        "company": "SuperPlay.",
+                        "reviews": "1.62M",
+                        "name": "Dice Dreams",
+                        "orient": "P",
+                        "time1": "4",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.superplaystudios.dicedreams",
+                        "storeios": "https://apps.apple.com/us/app/dice-dreams/id1484468651",
+                        "url": "dicedreams"
+                    },
+                    {
+                        "stars": "4.6",
+                        "downloads": "100M+ Installs",
+                        "apptype": "Game",
+                        "company": "Playrix",
+                        "reviews": "6.51M",
+                        "name": "Fishdom",
+                        "orient": "P",
+                        "time1": "4",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.playrix.fishdomdd.gplay",
+                        "storeios": "https://apps.apple.com/us/app/fishdom/id664575829",
+                        "url": "fishdom"
+                    },
+                    {
+                        "stars": "4.1",
+                        "downloads": "100M+ Installs",
+                        "apptype": "Game",
+                        "company": "TapNation",
+                        "reviews": "396K",
+                        "name": "Giant Rush",
+                        "orient": "P",
+                        "time1": "2",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.hypercarrot.giantrush",
+                        "storeios": "https://apps.apple.com/us/app/giant-rush/id1536131108",
+                        "url": "giantrush"
+                    },
+                    {
+                        "stars": "4.5",
+                        "downloads": "100M+ Installs",
+                        "apptype": "Game",
+                        "company": "Halfbrick Studios",
+                        "reviews": "4.24M",
+                        "name": "Jetpack Joyride",
+                        "orient": "L",
+                        "time1": "2",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.halfbrick.jetpackjoyride",
+                        "storeios": "https://apps.apple.com/us/app/jetpack-joyride/id457446957",
+                        "url": "jetpackjoyride"
+                    },
+                    {
+                        "stars": "4.6",
+                        "downloads": "100M+ Installs",
+                        "apptype": "Game",
+                        "company": "Dream Games, Ltd.",
+                        "reviews": "6.93M",
+                        "name": "Royal Match",
+                        "orient": "P",
+                        "time1": "4",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=com.dreamgames.royalmatch",
+                        "storeios": "https://apps.apple.com/gb/app/royal-match/id1482155847",
+                        "url": "royalmatch"
+                    },
+                    {
+                        "stars": "4.6",
+                        "downloads": "100M+ Installs",
+                        "apptype": "Game",
+                        "company": "Peak",
+                        "reviews": "4.05M",
+                        "name": "Toon Blast",
+                        "orient": "P",
+                        "time1": "2",
+                        "Time2": "0",
+                        "storeand": "https://play.google.com/store/apps/details?id=net.peakgames.toonblast&hl=en_US&gl=US",
+                        "storeios": "https://apps.apple.com/us/app/toon-blast/id1176027022",
+                        "url": "toonblast"
+                    }
+                ]
+
+                // Create a box for each app
+                apps.forEach(app => {
+                    const box = document.createElement("div");
+                    box.className = "box";
+
+                    const img = document.createElement("img");
+                    img.src = `${baseURL}${app.url}.png`;
+                    img.alt = `${app.url} icon`;
+
+                    const textDiv = document.createElement("div");
+
+                    const details = document.createElement("div");
+                    details.className = "details";
+
+                    const reviews = document.createElement("span");
+                    reviews.className = "reviews";
+                    reviews.textContent = `${app.reviews} reviews`;
+
+                    const stars = document.createElement("span");
+                    stars.className = "stars";
+                    const starRating = parseFloat(app.stars) || 0;
+                    stars.innerHTML = "★".repeat(Math.round(starRating)) + "☆".repeat(5 - Math.round(starRating)) + ` ${starRating.toFixed(1)}`;
+
+                    details.appendChild(reviews);
+                    details.appendChild(stars);
+
+                    // Add app name
+                    const appName = document.createElement("div");
+                    appName.className = "app-name";
+                    appName.textContent = app.name;
+                    details.appendChild(appName);
+
+                    // Add company
+                    const company = document.createElement("div");
+                    company.className = "company";
+                    company.textContent = app.company;
+                    details.appendChild(company);
+
+                    // Add downloads and buttons
+                    const downloadsButtons = document.createElement("div");
+                    downloadsButtons.className = "downloads-buttons";
+
+                    const downloads = document.createElement("span");
+                    downloads.className = "downloads";
+                    downloads.textContent = app.downloads;
+
+                    const buttons = document.createElement("div");
+                    buttons.className = "buttons";
+
+                    const installButton = document.createElement("button");
+                    installButton.className = "button";
+                    installButton.textContent = "Install";
+                    installButton.onclick = () => window.open(getMobileStoreUrlKey() === "storeand" ? app.storeand : app.storeios, "_blank");
+
+                    const tryNowButton = document.createElement("button");
+                    tryNowButton.className = "button";
+                    tryNowButton.textContent = "Try Now";
+                    tryNowButton.onclick = () => window.location.href = `pre_applaunch.html?app=${encodeURIComponent(app.url)}&orient=${app.orient}&auth_id=${authId}&install=${getMobileStoreUrlKey() === "storeand" ? app.storeand : app.storeios}`;
+
+                    buttons.appendChild(installButton);
+                    buttons.appendChild(tryNowButton);
+
+                    downloadsButtons.appendChild(downloads);
+                    downloadsButtons.appendChild(buttons);
+                    details.appendChild(downloadsButtons);
+
+                    // Append the image and details to the box
+                    box.appendChild(img);
+                    box.appendChild(details);
+
+                    // Append the box to the container
+                    container.appendChild(box);
+
+                    // Add a horizontal line between boxes
+                    const br = document.createElement("hr");
+                    br.className = "hr";
+                    container.appendChild(br);
+
+
+                });
+            } catch (error) {
+                console.error("Error fetching or rendering app details:", error);
+            }
+        }
+
+        async function renderBoxes() {
+            var bStatic=true;
+            if(bStatic)
+                renderStaticApps()
+            else
+                renderDynamicApps();
+        }
+
+        // Display splash screen for 3 seconds, then show main content
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById("splashScreen").style.display = 'none';
+                document.getElementById("boxContainer").style.display = 'block';
+                renderBoxes();
+            }, 1000);
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<!--pre_applaunch.html-->
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Netzyn</title>
+    <style>
+        /* body,
+        html {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            background-color: #353333;
+        } */
+
+html, body {
+  margin: 0;
+  padding: 0;
+  /* width: 100%; */
+  width: var(--width-dvw);
+  height: var(--height-dvh);
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background-color: #353333;
+}
+
+body > div {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  overflow: visible;
+}
+
+
+
+        #rotatescreenlanscape {
+            /* width: 100%; */
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            object-fit: cover;
+            background: #01203a;
+            margin: 0 !important;
+
+
+        }
+
+        #rotatescreenportrait {
+            /* width: 100%; */
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            object-fit: scale-down;
+            background: #01203a;
+            margin: 0 !important;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
+        @media screen and (orientation: portrait) {
+            .landscape {
+                flex-direction: row;
+                transform: rotate(90deg);
+            }
+
+            .portrait {
+                flex-direction: column;
+                transform: rotate(0deg);
+            }
+
+            .close-button {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                padding: 8px 18px;
+                color: #ffffff;
+                background-color: red;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+        }
+
+        @media screen and (orientation: landscape) {
+            .landscape {
+                flex-direction: row;
+            }
+
+            .portrait {
+                flex-direction: column;
+            }
+
+            .close-button {
+                position: absolute;
+                top: 30px;
+                right: 30px;
+                padding: 8px 18px;
+                color: #ffffff;
+                background-color: red;
+                border: none;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+        }
+
+        .app-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin: 10px;
+        }
+
+        img {
+            width: 100px;
+            height: 100px;
+            margin: 10px;
+            border-radius: 10px;
+        }
+
+        p {
+            margin: 10px;
+            font-size: 1.2rem;
+        }
+
+        .start-button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+
+<body id="body">
+    <div id="apprunparent" style="width: 100%; height: 100%">
+        <div class="content" id="content">
+            <!-- <button class="close-button" id="close"><img src="./assets/XButton.svg" style="width:8px;height:8px;"/></button> -->
+            <button class="close-button" id="close">&#x2716;</button>
+            <div class="app-icon" id="app-icon"></div>
+            
+        </div>
+        <iframe id="app_run" allow="fullscreen"
+            style="width: 100%; height: 100%; border: none; display: none;"></iframe>
+
+        <img id="rotatescreenlanscape" src="./assets/rotate-L.gif" />
+        <img id="rotatescreenportrait" src="./assets/rotate-P.gif" />
+    </div>
+
+    <script>
+
+        // Function to parse the URL query parameters
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        const closeButton = document.getElementById("close");
+
+        closeButton.onclick = () => {
+            window.close();
+            window.history.back();
+        };
+
+        // Function to handle fullscreen changes
+        function handleFullscreenChange() {
+            const content = document.getElementById("content");
+            const appRun = document.getElementById("app_run");
+            console.log("handleFullscreenChange called")
+            if (document.fullscreenElement) {
+                // In fullscreen mode
+                content.style.display = "none";
+                appRun.style.display = "block";
+            } else {
+                // Not in fullscreen mode
+                content.style.display = "block";
+                appRun.style.display = "none";
+            }
+        }
+
+        // Add event listeners for fullscreen change
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange); // For Safari
+        document.addEventListener("mozfullscreenchange", handleFullscreenChange); // For older Firefox versions
+        document.addEventListener("msfullscreenchange", handleFullscreenChange);
+        
+        function handleInlineContent() {
+            const content = document.getElementById("content");
+            const appRun = document.getElementById("app_run");
+            
+            // Hide the main content and show the iframe
+            content.style.display = "none";
+            appRun.style.display = "block";
+            appRun.classList.add("inline-content");
+        
+        }
+
+        function navigateToPage3() {
+
+            console.log("navigateToPage3");
+            let bUseFullscreen = true;
+            let bIgnoreOrientation = false;
+
+            if (window.location.href.includes("chris")) 
+            {
+                console.log("navigateToPage3 ignore fullscreen and orientation");
+                bUseFullscreen = false;
+                bIgnoreOrientation = true;
+            }
+
+            const content = document.getElementById("content");
+            const appRun = document.getElementById("app_run");
+
+            // Retrieve query parameters
+            const app = getQueryParam('app');
+            const orientation = getQueryParam('orient');
+            const install = getQueryParam('install');
+            const authId = getQueryParam('auth_id');
+            // if (!((window.matchMedia("(orientation: portrait)").matches) && orientation == "P")) {
+            //     return;
+            // }
+
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            /*
+                height > width = portrait
+                height < width = landscape
+            */
+
+        if(bIgnoreOrientation == false)
+        {
+            if (orientation == 'L' && height > width) {
+
+                console.log("navigateToPage3 landscape");
+                const body = document.getElementById("body");
+
+                // Get the element you want to display
+                const element = document.getElementById("rotatescreenlanscape");
+                const content = document.getElementById("content");
+
+                // Display the element
+                element.style.display = "block";
+                content.style.display = "none";
+                body.style.backgroundColor = "#01203a"
+
+                setTimeout(() => {
+                    body.style.backgroundColor = "#353333"
+                    element.style.display = "none";
+                    content.style.display = "flex";
+                }, 2000);
+
+                return;
+            }
+
+            if (orientation == 'P' && height < width) {
+                console.log("navigateToPage3 portrait");
+
+                const body = document.getElementById("body");
+
+                // Get the element you want to display
+                const element = document.getElementById("rotatescreenportrait");
+                const content = document.getElementById("content");
+
+                // Display the element
+                element.style.display = "block";
+                content.style.display = "none";
+                body.style.backgroundColor = "#01203a"
+
+                setTimeout(() => {
+                    body.style.backgroundColor = "#353333"
+                    element.style.display = "none";
+                    content.style.display = "flex";
+                }, 2000);
+
+                return;
+            }
+        }
+
+            // Update the iframe's source with query parameters
+            appRun.src = `apprun.html?app=${app}&orient=${orientation}&install=${install}&auth_id=${authId}`;
+
+            console.log("navigateToPage3 attempt fullscreen");
+
+            // Attempt to request fullscreen for the iframe
+            if (appRun.requestFullscreen && bUseFullscreen) {
+                appRun.requestFullscreen().catch(err => {
+                    console.error(`Failed to go fullscreen: ${err.message}`);
+                });
+            } else {
+                console.error("Fullscreen API is not supported.");
+                handleInlineContent();
+            }
+        }
+
+        // Retrieve query parameters
+        const app = getQueryParam('app');
+        const orientation = getQueryParam('orient');
+
+        // Set orientation styles based on the 'orient' parameter
+        const contentTag = document.getElementById("content");
+        if (orientation === 'P') {
+            contentTag.classList.add('portrait');
+        } else {
+            contentTag.classList.add('landscape');
+        }
+
+        // Create the image element
+        const img = document.createElement("img");
+        img.src = `https://nzos.netzyn.com/files/apps/${app}.png`;
+        img.alt = `${app} icon`;
+
+        // Create the text element
+        const gametext = document.createElement("p");
+        gametext.innerText = `Get Ready To Play ${app}`;
+
+        const appIcon = document.getElementById("app-icon");
+        appIcon.appendChild(img);
+        appIcon.appendChild(gametext);
+
+        // Calculate minutes and seconds
+        const storedTime = localStorage.getItem(app) || 300;
+        const minutes = Math.floor(storedTime / 60);
+        const seconds = storedTime % 60;
+        const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+
+        // Create the button element
+        const button = document.createElement("button");
+        button.className = 'start-button';
+
+        if(storedTime <= 0)
+        {
+            console.log("app: no time remaining");
+            const install = getQueryParam('install');
+
+            button.innerHTML = "Install";
+            button.onclick = () => window.open(install, "_blank");
+        }
+        else
+        {
+            console.log("app: launch");
+            button.onclick = navigateToPage3;
+            button.innerHTML = storedTime < 300 ? `Continue ${formattedTime}` : `Start ${formattedTime}`;
+        }
+
+        contentTag.appendChild(button);
+    </script>
+</body>
+
+</html>

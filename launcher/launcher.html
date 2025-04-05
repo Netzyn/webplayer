@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netzyn Webplayer Example</title>
+</head>
+
+<body>
+    <p style="font-size:30px; ">App with no toolbar</p>
+    <!-- <a id="candy_page" href="../page/page.html?app=draw&amp;orient=P&amp;" target="_blank"><img src="https://www.cityam.com/wp-content/uploads/2023/09/CCS-Candies-Key-Art-4-3-Logo-e1695898049123.jpg" class="post-img" width="128" height="128"></a> -->
+    <a id="candy_page" target="_blank"><img src="https://www.cityam.com/wp-content/uploads/2023/09/CCS-Candies-Key-Art-4-3-Logo-e1695898049123.jpg" class="post-img" width="128" height="128"></a>
+    <br>
+    <br>
+    <p style="font-size:30px; ">App with toolbar</p>
+    <a id="candy_toolbar" target="_blank"><img src="https://www.cityam.com/wp-content/uploads/2023/09/CCS-Candies-Key-Art-4-3-Logo-e1695898049123.jpg" class="post-img" width="128" height="128"></a>
+
+    <script>
+        const app       = "candycrush";
+        const orient    = app.includes("_L")  ? "L" :"P";
+
+        function getMobileStoreUrlKey() 
+        {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            if (/android/i.test(userAgent))
+                return "storeand";
+
+            if (/iPad|iPhone|iPod/i.test(userAgent))
+                return "storeios";
+
+            return "storeand";
+        }
+        
+        // set url for install button based on device type
+        function setInstallUrl() 
+        {
+            let authId  = new URLSearchParams(window.location.search).get("auth_id");
+            if( authId == null || authId == "")
+                authId = encodeURIComponent("get auth_id from Netzyn and put here");
+
+            console.log("app     = ", app);
+            console.log("orient  = ", orient);
+            console.log("auth_id = ", authId);
+
+            var urlPage = document.getElementById("candy_page");
+            if( urlPage)
+            {
+                var pageHref='../page/page.html?app=' + encodeURIComponent(app) + `&orient=` + orient + `&auth_id=` + authId ;
+                urlPage.setAttribute("href",pageHref);
+            }
+
+            var urlWithToolbar = document.getElementById("candy_toolbar");
+            if(urlWithToolbar == null)
+                return;
+
+            let install;
+           
+            urlWithToolbar.getAttribute("href");
+            if(getMobileStoreUrlKey() == "storeand")
+               install="https://play.google.com/store/apps/details?id=com.king.candycrushsaga";
+            else
+               install="https://apps.apple.com/us/app/candy-crush-saga/id553834731";
+
+            var hrefWithToolbar = '../timer/timer.html?app=' + encodeURIComponent(app) + `&orient=` + orient + `&auth_id=` + authId + `&install=` + encodeURIComponent(install);
+            urlWithToolbar.setAttribute("href", hrefWithToolbar);
+
+        }
+
+        setInstallUrl();
+    </script>
+</body>
+
+</html>

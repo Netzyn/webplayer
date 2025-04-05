@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Netzyn</title>
+    <script src="../NzPlayerWebBrowser.js?cachebuster=Math.random()"></script>
+
+    <style>
+        :root {
+            /* --height-dvh: 100vh; */
+            --width-dvw: 100%;
+            --height-dvh: 100%;
+        }
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: var(--width-dvw);
+            height: var(--height-dvh);
+            font-family: Arial, sans-serif;
+            background-color: #01203a !important;
+        }
+
+        .box {
+            background: #01203a;
+            object-fit: fill;
+            /* width: 100%; */
+            width: var(--width-dvw);
+            height: var(--height-dvh);
+        }
+
+        video {
+            background: black;
+            object-fit: fill;
+            /* width: 100%; */
+            width: var(--width-dvw);
+            height: var(--height-dvh);
+        }
+
+        #app_run {
+            /* width: 100%; */
+            width: var(--width-dvw);
+            height: var(--height-dvh);
+        }
+
+    </style>
+</head>
+
+<body>
+    <div id="app_run">
+        <div visibility: visible class="box" id="where_to_put_the_video" object-fit="fill" background="black"
+            tabindex="-1"></div>
+    </div>
+
+    <script>
+        function callbackWebPlayerStatus(statusId)
+        {
+            switch(statusId)
+            {
+                case NZWEBPLAYER_STATUS_UNSUPPORTED_BROWSER:
+                    alert("Sorry, this browser is not supported.");
+                    break;
+
+
+                default:
+                    alert("Sorry, the app has closed");
+                    break;
+            }
+
+            window.close();
+            window.history.back();            
+        }
+
+        function startNzPlayer()
+        {
+            let app         = new URLSearchParams(window.location.search).get("app");
+            let orientation = new URLSearchParams(window.location.search).get("orient");
+            let authId      = new URLSearchParams(window.location.search).get("auth_id");
+            const appServer = null;
+            const extraParam= '';
+
+            if(app == null || app == "")
+            {
+                const alertMsg = "App url param is missing";
+                alert(alertMsg);
+                return;
+            }
+
+            // should this be an error?
+            if(authId == null || authId == "")
+                authId = "get auth_id from Netzyn and put here";
+
+            if(orientation == null || orientation == "")
+                orientation = app.includes("_L")  ? "L" :"P";
+
+
+            NzPlayerWebBrowser(appServer, 'where_to_put_the_video', app, orientation == 'P' ? 'portrait' : 'landscape', encodeURIComponent(authId), extraParam, callbackWebPlayerStatus);
+        }
+
+        startNzPlayer();
+    </script>
+</body>
+
+</html>
