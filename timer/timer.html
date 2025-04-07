@@ -240,8 +240,8 @@
 
 <body>
     <div id="app_run" >
-        <img id="rotatescreenlanscape" src="rotate-L.gif" />
-        <img id="rotatescreenportrait" src="rotate-P.gif" />
+        <img id="rotatescreenlanscape" src="assets/rotate-L.gif" />
+        <img id="rotatescreenportrait" src="assets/rotate-P.gif" />
         <div class="top-bar" id="apprun_topbar">
             <div style="justify-content: flex-start;" class="sub-bar">
                 <div class="app-icon" style="place-items: center;margin-top: 5px;" id="netzyn_logo="><img src="assets/netzyn_logo-05.svg" width="75" height="30"/></div>
@@ -268,7 +268,7 @@
     </div>
 
     <script>
-
+	let didResize = false;
         function detectRotationToPortrait(timeoutId) {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -276,7 +276,7 @@
             // Check if it switched to portrait
             if (width < height) {
                 console.log("Device rotated to Portrait - Showing screen cover");
-
+		didResize = true;
                 const element = document.getElementById("rotatescreenportrait");
                 element.style.display = "none"; // Hide the cover
                 element.remove(); // Optionally remove the element
@@ -301,7 +301,7 @@
             // Check if it switched to portrait
             if (width > height) {
                 console.log("Device rotated to LandScape - Showing screen cover");
-
+		didResize = true;
                 const element = document.getElementById("rotatescreenlanscape");
                 element.style.display = "none"; // Hide the cover
                 element.remove(); // Optionally remove the element
@@ -535,8 +535,10 @@
                     element.style.display = "none";
                     timeLeft += 4;
                     localStorage.setItem(app, timeLeft);
-                    window.close();
-                    window.history.back();
+		    if(!resize){
+			window.close();
+			window.history.back();
+	            }
                 }, 5000);
 
                 bLaunch = false;
@@ -556,8 +558,10 @@
                     element.style.display = "none";
                     timeLeft += 4;
                     localStorage.setItem(app, timeLeft);
-                    window.close();
-                    window.history.back();
+                    if(!resize){
+                        window.close();
+                        window.history.back();
+                    }
 
                 }, 5000);
                 
