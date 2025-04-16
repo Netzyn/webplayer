@@ -174,8 +174,18 @@
             .start-button {
                 font-size: 22x;
             }
-        }
+            /* .top-bar {
+                position: fixed;
+                width: 3em;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                align-items: center;
+            } */
 
+        }
+        
         .install-arrow-box {
             display: inline-block;
             padding: 5px 10px;
@@ -185,7 +195,45 @@
             font-color: #000000;
             background-color: #ADD8E6;
 
-        }        
+        }      
+        
+        #rotatescreenlanscape {
+            /* width: 100%; */
+            width: 100%;
+            height: 100%;
+            position: absolute;  
+            top: 0;
+            left: 0;
+            display: none;
+            object-fit: contain; //cover;
+            background: #01203a;
+            //background-size: 100%;
+            margin: 0 !important;
+
+
+        }
+
+        #rotatescreenportrait {
+            /* width: 100%; */
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            object-fit: contain; //scale-down;
+            background: #01203a;
+            //background-size: 100%;
+            margin: 0 !important;
+        }
+
+        .content {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+
     </style>
 </head>
 
@@ -208,7 +256,10 @@
                     Install
                 </button>
                                 <button style="margin-right: 20px;border: none;" class="close-button" id="close"><img src="./assets/XButton.svg"/></button>
-                <p></p>
+                                <img id="rotatescreenlanscape" src="./assets/rotate-L.gif" />
+                                <img id="rotatescreenportrait" src="./assets/rotate-P.gif" />
+                        
+                                <p></p>
             </div>
         </div>
 
@@ -216,7 +267,7 @@
             tabindex="-1"></div>
 
     </div>
-    
+
     <script>
         function initializeV(){
             const screenWidth = window.innerWidth;
@@ -226,6 +277,10 @@
             const appRun = document.getElementById("app_run");
             const playArea = document.getElementById("where_to_put_the_video");
             let bBarTop = false; // TODO check if bar at top or bottom, but the quick method is to hard code it!
+
+            // const test1 = document.getElementById("test1");
+            // const test2 = document.getElementById("test2");
+            // const whereTo = document.getElementById("where_to_put_the_video");
 
             if(bBarTop)
             {
@@ -273,49 +328,20 @@
 
         window.addEventListener("load", () => {
             initializeV();
+        
             window.addEventListener('resize',function(){
-                //when the browser window is resized; recalculate
+                  //when the browser window is resized; recalculate
                 initializeV();
             });            
-
         });
 
         const app = new URLSearchParams(window.location.search).get("app");
         const orientation = new URLSearchParams(window.location.search).get("orient");
+        console.log(orientation)
         const install = new URLSearchParams(window.location.search).get("install");
 
         let timeLeft = localStorage.getItem(app) != null ? localStorage.getItem(app) : 300;
         const timerDisplay = document.getElementById("timer");
-
-        function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
-            timerDisplay.src = "./assets/timer.svg";
-            timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            timeLeft--;
-            localStorage.setItem(app, timeLeft <= 0 ? 0 : timeLeft);
-
-            if (timeLeft <= 0) { 
-                const installButton = document.getElementById("install");
-                console.log("pre_applaunch:navigateToPage3:setinterval installbutton=", installButton);
-
-                if(installButton != null)
-                    installButton.click();
-                else
-                    window.location.href = 'landingpage.html';
-            }
-            else
-                setTimeout(updateTimer, 1000);
-
-        }
-
-        const closeButton = document.getElementById("close");
-
-        closeButton.onclick = () => {
-            console.log("apprun_close onclick");
-            window.close();
-            window.history.back();
-        };
 
         //------------------------------------------------------------------------------
         // callbackWebPlayerStatus
@@ -341,6 +367,29 @@
             window.history.back();
         }
 
+        function updateTimer() {
+
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            timeLeft--;
+            localStorage.setItem(app, timeLeft <= 0 ? 0 : timeLeft);
+            setTimeout(updateTimer, 1000);
+            if (timeLeft <= 0) {
+                timeLeft = 300; // Reset to 5 minutes
+                localStorage.setItem(app,timeLeft)
+                return;
+            }
+
+        }
+
+        const closeButton = document.getElementById("close");
+
+        closeButton.onclick = () => {
+            window.close();
+            window.history.back();
+        };
+
         // const resizeButton = document.getElementById("testresize");
 
         // resizeButton.onclick = () => {
@@ -349,24 +398,93 @@
         
         const installButton = document.getElementById("install");
 
-        // installButton.onclick = () => window.open(install, "_blank");
-        installButton.onclick = () => window.location.href = `post_applaunch.html?app=${encodeURIComponent(app)}&orient=${orientation}&install=${install}`;
-
-        const appServer = null;
-        let authId      = new URLSearchParams(window.location.search).get("auth_id");
-        const extraParam= '';
-
-        if(authId == null)
-        {
-            alert("Auth id not provided");
+//        installButton.onclick = () => window.open(install, "_blank");
+//        installButton.onclick = () => window.location.href = `post_applaunch.html?app=${encodeURIComponent(app)}&orient=${orientation}&install=${install}`;
+          installButton.onclick = () => {
+            window.open(install, "_blank");
             window.close();
             window.history.back();
-            return;
+        };
+
+        updateTimer();
+
+        const width = window.innerWidth;
+            const height = window.innerHeight;
+            var bLaunch=true;
+
+            /*
+                height > width = portrait
+                height < width = landscape
+            */
+
+            if (orientation == 'L' && height > width) {
+
+                console.log("navigateToPage3 landscape");
+                const body = document.getElementById("body");
+
+                // Get the element you want to display
+                const element = document.getElementById("rotatescreenlanscape");
+                const content = document.getElementById("content");
+
+                // Display the element
+                element.style.display = "block";
+                //content.style.display = "none";
+                //body.style.backgroundColor = "#01203a"
+
+                setTimeout(() => {
+                    //body.style.backgroundColor = "#353333"
+                    element.style.display = "none";
+                    //content.style.display = "flex";
+                    window.close();
+                    window.history.back();
+
+                }, 2000);
+
+            bLaunch = false;
+
+            }
+
+            if (orientation == 'P' && height < width) {
+                console.log("navigateToPage3 portrait");
+
+                const body = document.getElementById("body");
+
+                // Get the element you want to display
+                const element = document.getElementById("rotatescreenportrait");
+                const content = document.getElementById("content");
+
+                // Display the element
+                element.style.display = "block";
+                //content.style.display = "none";
+                //body.style.backgroundColor = "#01203a"
+
+                setTimeout(() => {
+                    //body.style.backgroundColor = "#353333"
+                    element.style.display = "none";
+                    //content.style.display = "flex";
+                    window.close();
+                    window.history.back();
+
+                }, 2000);
+
+                bLaunch = false;
+            }
+       
+        if(bLaunch == true)
+        {
+            const appServer = null;
+            let authId      = new URLSearchParams(window.location.search).get("auth_id");
+            const extraParam= '';
+
+            if(authId == null)
+            {
+                alert("Auth id not provided");
+                window.close();
+                window.history.back();
+            }
+
+            NzPlayerWebBrowser(appServer, 'where_to_put_the_video', app, orientation == 'P' ? 'portrait' : 'landscape', encodeURIComponent(authId), extraParam, callbackWebPlayerStatus);
         }
-
-         if(NzPlayerWebBrowser(appServer, 'where_to_put_the_video', app, orientation == 'P' ? 'portrait' : 'landscape', encodeURIComponent(authId), extraParam, callbackWebPlayerStatus) )
-             updateTimer();
-
 
     </script>
 </body>

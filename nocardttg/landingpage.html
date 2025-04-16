@@ -161,9 +161,11 @@
     <script>
         // Base URL for fetching app icons
         const baseURL = "https://nzos.netzyn.com/files/apps/";
-//        const baseURL = "../apps/";
-
         let authId      = "get auth_id from Netzyn and put here"
+
+        // let my_data = fetch('https://nzos.netzyn.com/files/apps/draw.json').then(async(data)=>{
+        //     console.log(await data.json())
+        // });
         
         // get the operating system
         function getMobileStoreUrlKey() {
@@ -185,15 +187,11 @@
             return "storeand";
         }
 
-        //------------------------------------------------------------------------------
-        // renderStaticApps
-        //! DEBUG!!!
-        //! Render apps from a const array of apps (data mirrors app's JSON data)
-        //------------------------------------------------------------------------------
-        async function renderStaticApps() {
+        async function renderBoxes() {
             const container = document.getElementById("boxContainer");
 
             try {
+
                 const apps = [
                     {
                         // some random values
@@ -438,8 +436,9 @@
                     const tryNowButton = document.createElement("button");
                     tryNowButton.className = "button";
                     tryNowButton.textContent = "Try Now";
-                    tryNowButton.onclick = () => window.location.href = `pre_applaunch.html?app=${encodeURIComponent(app.url)}&orient=${app.orient}&auth_id=${authId}&install=${getMobileStoreUrlKey() === "storeand" ? app.storeand : app.storeios}`;
+                    tryNowButton.onclick = () => window.location.href = `apprun.html?app=${encodeURIComponent(app.url)}&orient=${app.orient}&auth_id=${authId}&install=${getMobileStoreUrlKey() === "storeand" ? app.storeand : app.storeios}`;
 
+                    //`apprun.html?app=${app}&orient=${orientation}&install=${install}`;
                     buttons.appendChild(installButton);
                     buttons.appendChild(tryNowButton);
 
@@ -464,10 +463,6 @@
             } catch (error) {
                 console.error("Error fetching or rendering app details:", error);
             }
-        }
-
-        async function renderBoxes() {
-            renderStaticApps()
         }
 
         // Display splash screen for 3 seconds, then show main content

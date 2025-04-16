@@ -35,18 +35,13 @@
         // set url for install button based on device type
         function setInstallUrl() 
         {
-            let authId  = new URLSearchParams(window.location.search).get("auth_id");
-            if( authId == null || authId == "")
-                authId = encodeURIComponent("get auth_id from Netzyn and put here");
-
             console.log("app     = ", app);
             console.log("orient  = ", orient);
-            console.log("auth_id = ", authId);
 
             var urlPage = document.getElementById("candy_page");
             if( urlPage)
             {
-                var pageHref='../page/page.html?app=' + encodeURIComponent(app) + `&orient=` + orient + `&auth_id=` + authId ;
+                var pageHref='../page/page.html?app=' + encodeURIComponent(app) + `&orient=` + orient ;
                 urlPage.setAttribute("href",pageHref);
             }
 
@@ -62,7 +57,7 @@
             else
                install="https://apps.apple.com/us/app/candy-crush-saga/id553834731";
 
-            var hrefWithToolbar = '../timer/timer.html?app=' + encodeURIComponent(app) + `&orient=` + orient + `&auth_id=` + authId + `&install=` + encodeURIComponent(install);
+            var hrefWithToolbar = '../timer/timer.html?app=' + encodeURIComponent(app) + `&orient=` + orient + `&install=` + encodeURIComponent(install);
             urlWithToolbar.setAttribute("href", hrefWithToolbar);
 
         }

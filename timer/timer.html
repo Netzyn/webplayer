@@ -574,13 +574,9 @@
         }
 
         function launchNzPlayer(app, orientation) {
-            let authId      = new URLSearchParams(window.location.search).get("auth_id");
+            let authId      = "get auth_id from Netzyn and put here";
             const appServer = null;
             const extraParam= '';
-
-            // should this be an error?
-            if(authId == null || authId == "")
-                authId = "get auth_id from Netzyn and put here";            
 
             console.log("Launching player for app: " + app + " in orientation: " + orientation);
 

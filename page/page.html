@@ -78,9 +78,9 @@
 
         function startNzPlayer()
         {
+            let authId      = "get auth_id from Netzyn and put here";
             let app         = new URLSearchParams(window.location.search).get("app");
             let orientation = new URLSearchParams(window.location.search).get("orient");
-            let authId      = new URLSearchParams(window.location.search).get("auth_id");
             const appServer = null;
             const extraParam= '';
 
@@ -90,10 +90,6 @@
                 alert(alertMsg);
                 return;
             }
-
-            // should this be an error?
-            if(authId == null || authId == "")
-                authId = "get auth_id from Netzyn and put here";
 
             if(orientation == null || orientation == "")
                 orientation = app.includes("_L")  ? "L" :"P";
