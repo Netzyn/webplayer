@@ -121,9 +121,7 @@
             /* background-color: #f3cd25; */
             background-color: white;
             /* Add a background color for contrast */
-            /* border: none; */
             box-shadow: 1px 1px 3px rgba(136, 136, 136, 0.3);
-            /* border: 2px solid grey;             */
             border-radius: 10px;
             cursor: pointer;
             font-size: 14px;
@@ -141,9 +139,7 @@
             color: #ffffff;
             background-color: white;
             /* Add a background color for contrast */
-            /* border: none; */
             box-shadow: 1px 1px 3px rgba(136, 136, 136, 0.3);
-            /* border: 2px solid grey;             */
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
@@ -174,15 +170,6 @@
             .start-button {
                 font-size: 22x;
             }
-            /* .top-bar {
-                position: fixed;
-                width: 3em;
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                justify-content: space-between;
-                align-items: center;
-            } */
 
         }
         
@@ -276,7 +263,7 @@
             // Check if it switched to portrait
             if (width < height) {
                 console.log("Device rotated to Portrait - Showing screen cover");
-		didResize = true;
+		        didResize = true;
                 const element = document.getElementById("rotatescreenportrait");
                 element.style.display = "none"; // Hide the cover
                 element.remove(); // Optionally remove the element
@@ -291,8 +278,6 @@
                 launchNzPlayer(app, 'P');  // Use portrait orientation
             }
 
-            // We don't need to call this outside rotation check anymore
-            // launchNzPlayer(app, 'P'); // Comment this out
         }
         function detectRotationToLandscape(timeoutId) {
             const width = window.innerWidth;
@@ -301,7 +286,7 @@
             // Check if it switched to portrait
             if (width > height) {
                 console.log("Device rotated to LandScape - Showing screen cover");
-		didResize = true;
+		        didResize = true;
                 const element = document.getElementById("rotatescreenlanscape");
                 element.style.display = "none"; // Hide the cover
                 element.remove(); // Optionally remove the element
@@ -316,16 +301,10 @@
                 launchNzPlayer(app, 'L');  // Use portrait orientation
             }
 
-            // We don't need to call this outside rotation check anymore
-            // launchNzPlayer(app, 'P'); // Comment this out
         }
 
         function isSafari()
-        {
-            // return navigator.vendor && navigator.vendor.indexOf('Apple') > -1 &&
-            //        navigator.userAgent &&
-            //        navigator.userAgent.indexOf('CriOS') == -1 &&
-            //        navigator.userAgent.indexOf('FxiOS') == -1;    
+        {  
             return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);    
         }
 
@@ -364,26 +343,14 @@
             }
             else
             {
-//                if (window.matchMedia("(orientation: portrait)").matches) {
-                    // Portrait: Adjust height minus toolbar
                     const topBarHeight = topBar.offsetHeight;
                     appRun.style.width = screenWidth + "px";
                     appRun.style.height = (screenHeight - topBarHeight) + "px";
                     playArea.style.width = screenWidth + "px";
                     playArea.style.height = (screenHeight - topBarHeight) + "px";
                     appRun.style.marginBottom = `${topBarHeight}px`; // Fixed syntax
-                // } else {
-                //     // Landscape: Adjust width minus toolbar
-                //     const topBarWidth = topBar.offsetWidth;
-                //     appRun.style.width = `${screenWidth - topBarWidth}px`;
-                //     appRun.style.height = `${screenHeight}px`;
-                //     playArea.style.width = `${screenWidth - topBarWidth}px`;
-                //     playArea.style.height = `${screenHeight}px`;
-                //     appRun.style.marginLeft = `${topBarWidth}px`; // Fixed syntax
-                // }
             }
 
-                //assign width and height to your v unit elements here
         }
 
         window.addEventListener("load", () => {
@@ -402,7 +369,6 @@
         if(app == null || app == "")
         {
             const alertMsg = "App url param is missing";
-            alert(alertMsg);
         }
 
         if(orientation == null || orientation == "")
@@ -411,7 +377,6 @@
         if(install == null || install =="")
         {
             const alertMsg = "App install url missing";
-            alert(alertMsg);
         }
 
         let timeLeft = localStorage.getItem(app) != null ? localStorage.getItem(app) : 300;
@@ -458,7 +423,6 @@
         const installButton = document.getElementById("install");
         if(installButton != null && install != null && install != "")
         {
-            //installButton.onclick = () => window.open(install, "_blank");
             installButton.onclick = () => window.location.href = `${install}`;
         }
         installButton.onclick = () => {
@@ -499,13 +463,12 @@
             if(app == null || app == "")
             {
                 const alertMsg = "App url param is missing";
-                alert(alertMsg);
                 return;
             }
 
             if (orientation == null || orientation == "")
             {
-                if( app.includes("_L"))
+                if( app.includes("_l"))
                     orientation = "L";
                 else
                     orientation = "P";
@@ -518,10 +481,6 @@
             const height = window.innerHeight;
             var bLaunch = true;
 
-            /*
-                height > width = portrait
-                height < width = landscape
-            */
 
             if (orientation == 'L' && height > width) {
                 console.log("navigateToPage3 landscape");
@@ -535,7 +494,7 @@
                     element.style.display = "none";
                     timeLeft += 4;
                     localStorage.setItem(app, timeLeft);
-		    if(!resize){
+		    if(!didResize){
 			window.close();
 			window.history.back();
 	            }
@@ -558,7 +517,7 @@
                     element.style.display = "none";
                     timeLeft += 4;
                     localStorage.setItem(app, timeLeft);
-                    if(!resize){
+                    if(!didResize){
                         window.close();
                         window.history.back();
                     }
@@ -574,8 +533,9 @@
         }
 
         function launchNzPlayer(app, orientation) {
-            let authId      = "get auth_id from Netzyn and put here";
-            const appServer = null;
+            //let authId      = "get auth_id from Netzyn and put here";
+            let authId = "cloud"
+            const appServer = "nz-preprod.nz-naas.com";
             const extraParam= '';
 
             console.log("Launching player for app: " + app + " in orientation: " + orientation);

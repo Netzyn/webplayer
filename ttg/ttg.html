@@ -161,18 +161,12 @@
     <script>
         // Base URL for fetching app icons
         const baseURL = "https://nzos.netzyn.com/files/apps/";
-//        const baseURL = "../apps/";
-
         let authId      = "get auth_id from Netzyn and put here"
+
         
         // get the operating system
         function getMobileStoreUrlKey() {
             var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-
-            // Windows Phone must come first because its UA also contains "Android"
-            // if (/windows phone/i.test(userAgent)) {
-            //     return "windows phone";
-            // }
 
             if (/android/i.test(userAgent)) {
                 return "storeand";
@@ -185,15 +179,11 @@
             return "storeand";
         }
 
-        //------------------------------------------------------------------------------
-        // renderStaticApps
-        //! DEBUG!!!
-        //! Render apps from a const array of apps (data mirrors app's JSON data)
-        //------------------------------------------------------------------------------
-        async function renderStaticApps() {
+        async function renderBoxes() {
             const container = document.getElementById("boxContainer");
 
             try {
+
                 const apps = [
                     {
                         // some random values
@@ -237,7 +227,7 @@
                         "Time2": "0",
                         "storeand": "https://play.google.com/store/apps/details?id=com.aquiris.horizonchase",
                         "storeios": "https://apps.apple.com/us/app/horizon-chase/id991018252",
-                        "url": "horizonchase"
+                        "url": "horizonchase_l"
                     },
                     {
                         "stars": "4.6",
@@ -349,7 +339,7 @@
                         "Time2": "0",
                         "storeand": "https://play.google.com/store/apps/details?id=com.halfbrick.jetpackjoyride",
                         "storeios": "https://apps.apple.com/us/app/jetpack-joyride/id457446957",
-                        "url": "jetpackjoyride"
+                        "url": "jetpackjoyride_l"
                     },
                     {
                         "stars": "4.6",
@@ -438,7 +428,7 @@
                     const tryNowButton = document.createElement("button");
                     tryNowButton.className = "button";
                     tryNowButton.textContent = "Try Now";
-                    tryNowButton.onclick = () => window.location.href = `pre_applaunch.html?app=${encodeURIComponent(app.url)}&orient=${app.orient}&auth_id=${authId}&install=${getMobileStoreUrlKey() === "storeand" ? app.storeand : app.storeios}`;
+                    tryNowButton.onclick = () => window.location.href = `../timer/timer.html?app=${encodeURIComponent(app.url)}&install=${getMobileStoreUrlKey() === "storeand" ? app.storeand : app.storeios}`;
 
                     buttons.appendChild(installButton);
                     buttons.appendChild(tryNowButton);
@@ -464,10 +454,6 @@
             } catch (error) {
                 console.error("Error fetching or rendering app details:", error);
             }
-        }
-
-        async function renderBoxes() {
-            renderStaticApps()
         }
 
         // Display splash screen for 3 seconds, then show main content
