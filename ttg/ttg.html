@@ -347,7 +347,7 @@
                     const tryNowButton = document.createElement("button");
                     tryNowButton.className = "button";
                     tryNowButton.textContent = "Try Now";
-                    tryNowButton.onclick = () => window.location.href = `../timer/timer.html?app=${encodeURIComponent(app.url)}&install=${getMobileStoreUrlKey() === "storeand" ? app.storeand : app.storeios}`;
+                    tryNowButton.onclick = () => window.location.href = `../timer/timer.html?app=${encodeURIComponent(app.url)}&install=${app.storeand}&install_ios=${app.storeios}`;
 
                     buttons.appendChild(installButton);
                     buttons.appendChild(tryNowButton);

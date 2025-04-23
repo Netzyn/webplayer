@@ -302,7 +302,10 @@
             }
 
         }
-
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+        
         function isSafari()
         {  
             return /^((?!chrome|android).)*safari/i.test(navigator.userAgent);    
@@ -365,6 +368,9 @@
         let app = new URLSearchParams(window.location.search).get("app");
         let orientation = new URLSearchParams(window.location.search).get("orient");
         let install = new URLSearchParams(window.location.search).get("install");
+        let install_ios = new URLSearchParams(window.location.search).get("install_ios");
+        let no_install = (install == null || install =="");
+        let no_install_ios = (install_ios == null || install_ios =="");
 
         if(app == null || app == "")
         {
@@ -374,10 +380,25 @@
         if(orientation == null || orientation == "")
             orientation = "L";
 
-        if(install == null || install =="")
-        {
-            const alertMsg = "App install url missing";
+        // Handle missing install links
+        if (no_install && no_install_ios) {
+            console.log("App install url missing");
+        } else if (no_install && !no_install_ios) {
+            if (isIOS()) {
+                install = install_ios;
+            } else {
+                console.log("Android install URL missing and device is not iOS");
+            }
+        } else if (!no_install && no_install_ios) {
+            // Use Android link (already in `install`)
+            // Nothing needs to change
+        } else {
+            // Both links present
+            if (isIOS()) {
+                install = install_ios;
+            }
         }
+
 
         let timeLeft = localStorage.getItem(app) != null ? localStorage.getItem(app) : 300;
         const timerDisplay = document.getElementById("timer");
