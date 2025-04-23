@@ -396,6 +396,11 @@
 
 
         let timeLeft = localStorage.getItem(app) != null ? localStorage.getItem(app) : 300;
+        //*************************************************************************
+        // for this exmaple, so the timer never expires, always start at 300seconds time remaining
+        timeLeft = 300
+        //*************************************************************************
+
         const timerDisplay = document.getElementById("timer");
 
         function updateTimer() {
@@ -404,7 +409,11 @@
             timerDisplay.src = "./assets/timer.svg";
             timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             timeLeft--;
-            localStorage.setItem(app, timeLeft <= 0 ? 0 : timeLeft);
+
+            //*************************************************************************
+            // for this example, disable saving the time remaining
+            //localStorage.setItem(app, timeLeft <= 0 ? 0 : timeLeft);
+            //*************************************************************************
 
             if (timeLeft <= 0) { 
                 const installButton = document.getElementById("install");
@@ -528,13 +537,13 @@
             let username = getCookie("Username");
             if(username == null || username == "")
             {
-                userName = randomUserName(15);
+                username = randomUserName(15);
 
                 let days=365;
-                console.log("New Username =", userName);
-                setCookie("Username", userName, days);
+                console.log("New Username =", username);
+                setCookie("Username", username, days);
             }
-            return userName;
+            return username;
         }
 
         function startNzPlayer() {
@@ -628,7 +637,7 @@
                 app,
                 orientation == 'P' ? 'portrait' : 'landscape',
                 encodeURIComponent(authId),
-                cookieGetUserName(),
+                getUserName(),
                 extraParam,
                 callbackWebPlayerStatus
             );
