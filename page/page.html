@@ -71,7 +71,7 @@
         //------------------------------------------------------------------------------
         function randomUserName(length) {
             let result = '';
-            const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'; 
+            const characters = 'ab01cdefghijklmnopqrst23uvwxy4z5ABCDEFG67HIJKLMNOPQR89STUVWXYZ'; 
             const charactersLength = characters.length;
 
             let counter = 0;
@@ -84,6 +84,14 @@
             return result;
         }
 
+        //------------------------------------------------------------------------------
+        // setCookie
+        //! Helper to set a cookie
+        //!
+        //! @param [in] name        keyname
+        //! @param [in] value       data to store
+        //! @param [in] days        When cookie will expire
+        //------------------------------------------------------------------------------
         function setCookie(name, value, days) 
         {
             let expires = "";
@@ -96,6 +104,15 @@
             document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
         }
 
+        //------------------------------------------------------------------------------
+        // getCookie
+        //! Helper to get a cookie
+        //!
+        //! @param [in] name        keyname
+        //!
+        //! @returns value of cookie
+        //! @returns null if cookie not found
+        //------------------------------------------------------------------------------
         function getCookie(name) 
         {
             const cookies = document.cookie.split('; ');
@@ -110,24 +127,37 @@
             return null;
         }
 
+        //------------------------------------------------------------------------------
+        // getUserName
+        //! Get username
+        //!     If username cookie not found, create a random username and save it as a cookie.
+        //!
+        //! @returns username string
+        //------------------------------------------------------------------------------
         function getUserName() 
         {
             let username = getCookie("Username");
             if(username == null || username == "")
             {
-                userName = randomUserName(15);
+                username = randomUserName(15);
 
                 let days=365;
-                console.log("New Username =", userName);
-                setCookie("Username", userName, days);
+                console.log("New Username =", username);
+                setCookie("Username", username, days);
             }
-            return userName;
+            return username;
         }
 
 
 
 
 
+        //------------------------------------------------------------------------------
+        // callbackWebPlayerStatus
+        //! Status event for webplayer
+        //!
+        //! @returns statusId       Callback event ID
+        //------------------------------------------------------------------------------
         function callbackWebPlayerStatus(statusId)
         {
             switch(statusId)
@@ -146,6 +176,10 @@
             window.history.back();            
         }
 
+        //------------------------------------------------------------------------------
+        // startNzPlayer
+        //! Start webplayer
+        //------------------------------------------------------------------------------
         function startNzPlayer()
         {
             let authId      = "get auth_id from Netzyn and put here";
