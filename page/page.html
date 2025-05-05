@@ -199,7 +199,15 @@
                 orientation = app.includes("_L")  ? "L" :"P";
 
 
-            NzPlayerWebBrowser(appServer, 'where_to_put_the_video', app, orientation == 'P' ? 'portrait' : 'landscape', encodeURIComponent(authId), getUserName(), extraParam, callbackWebPlayerStatus);
+            NzPlayerWebBrowser(
+                appServer, 
+                'where_to_put_the_video', 
+                app, orientation == 'P' ? 'portrait' : 'landscape', 
+                encodeURIComponent(authId), 
+                encodeURIComponent(getUserName()), 
+                encodeURIComponent(extraParam), 
+                callbackWebPlayerStatus
+            );
         }
 
         startNzPlayer();

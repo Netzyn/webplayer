@@ -675,8 +675,8 @@
                 app,
                 orientation == 'P' ? 'portrait' : 'landscape',
                 encodeURIComponent(authId),
-                getUserName(),
-                extraParam,
+                encodeURIComponent(getUserName()),
+                encodeURIComponent(extraParam),
                 callbackWebPlayerStatus
             );
         }
