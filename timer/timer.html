@@ -427,7 +427,7 @@
                 else
                 {
                     window.close();
-                    window.history.back();
+                    goBack();
                 }
             }
             else
@@ -441,7 +441,7 @@
             closeButton.onclick = () => {
                 console.log("apprun_close onclick");
                 window.close();
-                window.history.back();
+                goBack();
             };
         }
         
@@ -453,7 +453,7 @@
         installButton.onclick = () => {
             window.open(install, "_blank");
             window.close();
-            window.history.back();
+            goBack();
         };
 
         //------------------------------------------------------------------------------
@@ -477,7 +477,8 @@
             }
 
             window.close();
-            window.history.back();            
+            goBack();
+
         }
 
         //------------------------------------------------------------------------------
@@ -617,7 +618,7 @@
                     localStorage.setItem(app, timeLeft);
                     if(!didResize){
                         window.close();
-                        window.history.back();
+                        goBack();
                     }
                 }, 5000);
 
@@ -640,7 +641,7 @@
                     localStorage.setItem(app, timeLeft);
                     if(!didResize){
                         window.close();
-                        window.history.back();
+                        goBack();
                     }
 
                 }, 5000);
@@ -654,6 +655,12 @@
             }
         }
 
+        function goBack()
+        {
+            //window.history.back();
+            history.go(-(window.history.length - 1));        
+        }
+        
         //------------------------------------------------------------------------------
         // launchNzPlayer
         //! Start  webplayer

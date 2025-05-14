@@ -173,7 +173,13 @@
             }
 
             window.close();
-            window.history.back();            
+            goBack();
+        }
+
+        function goBack()
+        {
+            //window.history.back();
+            history.go(-(window.history.length - 1));        
         }
 
         //------------------------------------------------------------------------------
