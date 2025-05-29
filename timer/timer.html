@@ -255,6 +255,10 @@
     </div>
 
     <script>
+        let g_WaitForStartTimerId   = 0;
+        let g_WaitForStartTimeout   = 10000; // 10seconds
+        let g_BackOnClose           = true;
+
 	let didResize = false;
         function detectRotationToPortrait(timeoutId) {
             const width = window.innerWidth;
@@ -364,8 +368,16 @@
         let orientation = new URLSearchParams(window.location.search).get("orient");
         let install = new URLSearchParams(window.location.search).get("install");
         let install_ios = new URLSearchParams(window.location.search).get("install_ios");
+        let backOnClose = new URLSearchParams(window.location.search).get("back");
         let no_install = (install == null || install =="");
         let no_install_ios = (install_ios == null || install_ios =="");
+
+        if(backOnClose == null )
+            g_BackOnClose = false;
+        else if(backOnClose=="true")
+            g_BackOnClose = true;
+        else
+            g_BackOnClose = false;
 
         if(app == null || app == "")
         {
@@ -395,7 +407,13 @@
         }
 
 
-        let timeLeft = localStorage.getItem(app) != null ? localStorage.getItem(app) : 300;
+        let timerleft = 300;
+
+        if(localStorage != null && app != null)
+        {
+            timeLeft = localStorage.getItem(app);
+        }
+
         //*************************************************************************
         // for this exmaple, so the timer never expires, always start at 300seconds time remaining
         timeLeft = 300
@@ -412,7 +430,8 @@
 
             //*************************************************************************
             // for this example, disable saving the time remaining
-            //localStorage.setItem(app, timeLeft <= 0 ? 0 : timeLeft);
+            // if (localStorage != null)
+            //     localStorage.setItem(app, timeLeft <= 0 ? 0 : timeLeft);
             //*************************************************************************
 
             if (timeLeft <= 0) { 
@@ -464,12 +483,19 @@
         //------------------------------------------------------------------------------
         function callbackWebPlayerStatus(statusId)
         {
+            clearTimeout(g_WaitForStartTimerId);
+            g_WaitForStartTimerId = 0;
+
             switch(statusId)
             {
                 case NZWEBPLAYER_STATUS_UNSUPPORTED_BROWSER:
                     alert("Sorry, this browser is not supported.");
                     break;
 
+                case NZWEBPLAYER_STATUS_STARTED:
+                    updateTimer();
+                    return;
+                    break;
 
                 default:
                     alert("Sorry, the app has closed");
@@ -598,7 +624,8 @@
             }
         
             orientation = orientation.toUpperCase()
-            updateTimer();
+            // move to started callback
+            //updateTimer();
 
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -615,7 +642,8 @@
                 setTimeout(() => {
                     element.style.display = "none";
                     timeLeft += 4;
-                    localStorage.setItem(app, timeLeft);
+                    if(localStorage != null)
+                        localStorage.setItem(app, timeLeft);
                     if(!didResize){
                         window.close();
                         goBack();
@@ -638,7 +666,8 @@
                 setTimeout(() => {
                     element.style.display = "none";
                     timeLeft += 4;
-                    localStorage.setItem(app, timeLeft);
+                    if(localStorage != null)
+                        localStorage.setItem(app, timeLeft);
                     if(!didResize){
                         window.close();
                         goBack();
@@ -657,10 +686,54 @@
 
         function goBack()
         {
-            //window.history.back();
-            history.go(-(window.history.length - 1));        
+            if(g_BackOnClose == true)
+            {
+                if(isIOS())
+                    history.go(-(window.history.length - 1));        
+                else
+                    window.history.back();
+            }
+            else
+                window.location.replace("./pleaseclose.html");
+
+            // if(isIOS())
+            // {
+            //     if(window.history.length > 1)
+            //     {
+            //         history.go(-(window.history.length - 1));        
+            //     }
+            //     else
+            //         window.location.replace("./pleaseclose.html");
+            // }
+            // else
+            // {
+            //     window.history.back();
+            // }
         }
         
+        function waitForStart()
+        {
+            console.log("waitForStart, show thanks 0");
+            //goBack();
+            //window.location.href = "_blank";
+            //window.location.href = "./thanks.html";
+
+            if(isIOS())
+            {
+                if(window.history.length > 1)
+                {
+                    history.go(-(window.history.length - 1));        
+                }
+                else
+                    window.location.replace("./playtimeout.html");
+            }
+            else
+            {
+                window.location.replace("./playtimeout.html");
+            }
+        }
+
+
         //------------------------------------------------------------------------------
         // launchNzPlayer
         //! Start  webplayer
@@ -686,6 +759,9 @@
                 encodeURIComponent(extraParam),
                 callbackWebPlayerStatus
             );
+
+            g_WaitForStartTimerId = setTimeout(waitForStart, g_WaitForStartTimeout);
+
         }
 
         startNzPlayer();
