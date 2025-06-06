@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<noscript>
+    <head>
+        <title>Javscript not enabled</title>
+	    <meta http-equiv="refresh" content="0; url=./enablejs.html" />
+    </head>
+</noscript>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -438,6 +445,7 @@
                 const installButton = document.getElementById("install");
                 console.log("pre_applaunch:navigateToPage3:setinterval installbutton=", installButton);
 
+                NzPlayerWebBrowserPauseMedia();
                 const alertMsg = "Demo time has been exhausted";
                 alert(alertMsg);
 
@@ -481,8 +489,10 @@
         //!
         //! @param [in] statusId    Event status ID
         //------------------------------------------------------------------------------
-        function callbackWebPlayerStatus(statusId)
+        function callbackWebPlayerStatus(statusId, data)
         {
+            console.log("callbackWebPlayerStatus statusId=", statusId);
+
             clearTimeout(g_WaitForStartTimerId);
             g_WaitForStartTimerId = 0;
 
@@ -497,6 +507,11 @@
                     return;
                     break;
 
+                case NZWEBPLAYER_STATUS_RAWDATA:
+                    handleRawData(data);
+                    return;
+                    break;
+
                 default:
                     alert("Sorry, the app has closed");
                     break;
@@ -506,6 +521,123 @@
             goBack();
 
         }
+
+
+    //************************ For RAWDATA
+        //------------------------------------------------------------------------------
+        // base64ToIntArray
+        //! Convert from base64 to an array of integers
+        //!
+        //! @param [in] base64String        String of base64 values to convert
+        //!
+        //! @return base64String as uint8_t array
+        //------------------------------------------------------------------------------
+        function base64ToIntArray(base64String) 
+        {
+            const binaryString = atob(base64String);
+            const byteArray = new Uint8Array(binaryString.length);
+            for (let i = 0; i < binaryString.length; i++) 
+                byteArray[i] = binaryString.charCodeAt(i);
+            
+            const intArray = Array.from(byteArray);
+
+            return intArray;
+        }
+
+        //------------------------------------------------------------------------------
+        // stringToByteArrayOfChars
+        //! Convert a string to an array of uint8_t 
+        //!
+        //! @param [in] str             String to convert to array of uin8_t
+        //!
+        //! @return str as uint8_t array
+        //------------------------------------------------------------------------------
+        function stringToByteArrayOfChars(str)
+        {
+            const byteArray = new Uint8Array(str.length);
+            for (let i = 0; i < str.length; i++)
+                byteArray[i] += str.charCodeAt(i);
+
+            return byteArray;
+        }
+
+        //------------------------------------------------------------------------------
+        // intArrayOfCharsToString
+        //! Convert an array of ints to a string
+        //!
+        //! @param [in] intArray             Array of ints to conevert to a String
+        //!
+        //! @return intArray as string
+        //------------------------------------------------------------------------------
+        function intArrayOfCharsToString(intArray)
+        {
+            var str;
+            str="";
+            for (let i = 0; i < intArray.length; i++)
+                str += String.fromCharCode(intArray[i]);
+
+            return str;
+        }
+
+        //------------------------------------------------------------------------------
+        // uint8ArrayToBase64
+        //! Convert an array of uint8 to base64
+        //! NOTE array.toBase64() was an unknown function on Chrome Ubuntu 22!!! hence this function!
+        //!
+        //! @param [in] u8Array             Array of uint8 to conevert to base64
+        //!
+        //! @return u8Array as base64 string
+        //------------------------------------------------------------------------------
+        function uint8ArrayToBase64(u8Array) 
+        {
+            var decoder = new TextDecoder('utf8');
+            var b64encoded = btoa(decoder.decode(u8Array));
+
+            return b64encoded;
+        }
+
+        //------------------------------------------------------------------------------
+        // handleRawData
+        //! Handle raw data from webplayer library
+        //!
+        //! @param [in] data        JSON data {string: oidapp, string: oid1, int:param, base64:data}
+        //------------------------------------------------------------------------------
+        function handleRawData(data)
+        {
+            console.log("handleRawData = ", data );
+            var oidApp = data.oidapp;
+            var oid1 = data.oid1;
+            var param = data.param;
+            var data = base64ToIntArray(data.data);
+
+            console.log("oidApp = ", oidApp);
+            console.log("oid1   = ", oid1);
+            console.log("param  = ", param);
+            console.log("data   = ", data);
+
+            // make sure this is the code for a debug string to test the raw data path
+            if(param !=0xffffffff)
+            {
+                alert("Got Raw data");
+
+                return;
+            }
+
+            var dataAsString = intArrayOfCharsToString(data);
+            console.log("dataAsString  = ", dataAsString);
+            alert("Got Raw data\n" + dataAsString);
+
+            var retData = stringToByteArrayOfChars("Hello, " + dataAsString);
+
+            console.log("retData =",retData);
+
+            // tobase64 does not exist with CHrome on ubuntu 22
+            //NzPlayerWebBrowserSendRawData(oidApp, oid1, param, retData.toBase64() );
+            NzPlayerWebBrowserSendRawData(oidApp, oid1, param, uint8ArrayToBase64(retData) );
+        }
+    //************************ END For RAWDATA
+
+
 
         //------------------------------------------------------------------------------
         // randomUserName
@@ -607,6 +739,7 @@
         function startNzPlayer() {
             let app = new URLSearchParams(window.location.search).get("app");
             let orientation = new URLSearchParams(window.location.search).get("orient");
+            let bCheckOrientation = true; // set to false to make debugging on desktop easier
             console.log("this is the given orientation" + orientation)
 
             if(app == null || app == "")
@@ -631,51 +764,54 @@
             const height = window.innerHeight;
             var bLaunch = true;
 
-            if (orientation == 'L' && height > width) {
-                console.log("navigateToPage3 landscape");
-                const element = document.getElementById("rotatescreenlanscape");
-                const content = document.getElementById("content");
+            if(bCheckOrientation == true)
+            {
+                if (orientation == 'L' && height > width) {
+                    console.log("navigateToPage3 landscape");
+                    const element = document.getElementById("rotatescreenlanscape");
+                    const content = document.getElementById("content");
 
-                element.style.display = "block";
-                window.addEventListener("resize", detectRotationToLandscape);
+                    element.style.display = "block";
+                    window.addEventListener("resize", detectRotationToLandscape);
 
-                setTimeout(() => {
-                    element.style.display = "none";
-                    timeLeft += 4;
-                    if(localStorage != null)
-                        localStorage.setItem(app, timeLeft);
-                    if(!didResize){
-                        window.close();
-                        goBack();
-                    }
-                }, 5000);
+                    setTimeout(() => {
+                        element.style.display = "none";
+                        timeLeft += 4;
+                        if(localStorage != null)
+                            localStorage.setItem(app, timeLeft);
+                        if(!didResize){
+                            window.close();
+                            goBack();
+                        }
+                    }, 5000);
 
-                bLaunch = false;
-            }
+                    bLaunch = false;
+                }
 
-            if (orientation == 'P' && height < width) {
-                console.log("navigateToPage3 portrait");
+                if (orientation == 'P' && height < width) {
+                    console.log("navigateToPage3 portrait");
 
-                const element = document.getElementById("rotatescreenportrait");
-                const content = document.getElementById("content");
+                    const element = document.getElementById("rotatescreenportrait");
+                    const content = document.getElementById("content");
 
-                element.style.display = "block";
-                window.addEventListener("resize", detectRotationToPortrait);
+                    element.style.display = "block";
+                    window.addEventListener("resize", detectRotationToPortrait);
 
-                // The timeout ensures the rotation handling is only after a certain period.
-                setTimeout(() => {
-                    element.style.display = "none";
-                    timeLeft += 4;
-                    if(localStorage != null)
-                        localStorage.setItem(app, timeLeft);
-                    if(!didResize){
-                        window.close();
-                        goBack();
-                    }
+                    // The timeout ensures the rotation handling is only after a certain period.
+                    setTimeout(() => {
+                        element.style.display = "none";
+                        timeLeft += 4;
+                        if(localStorage != null)
+                            localStorage.setItem(app, timeLeft);
+                        if(!didResize){
+                            window.close();
+                            goBack();
+                        }
 
-                }, 5000);
-                
-                bLaunch = false;
+                    }, 5000);
+                    
+                    bLaunch = false;
+                }
             }
 
             // Only launch if no rotation needed or after rotation is done
@@ -747,6 +883,9 @@
             const extraParam= '';
 
             console.log("Launching player for app: " + app + " in orientation: " + orientation);
+
+            window.removeEventListener("resize", detectRotationToLandscape);
+            window.removeEventListener("resize", detectRotationToPortrait);
 
             //Call the player with the correct orientation
             NzPlayerWebBrowser(

@@ -1,6 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<noscript>
+    <head>
+        <title>Javscript not enabled</title>
+	    <meta http-equiv="refresh" content="0; url=./enablejs.html" />
+    </head>
+</noscript>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -158,7 +165,7 @@
         //!
         //! @returns statusId       Callback event ID
         //------------------------------------------------------------------------------
-        function callbackWebPlayerStatus(statusId)
+        function callbackWebPlayerStatus(statusId, data)
         {
             switch(statusId)
             {
@@ -167,6 +174,10 @@
                     break;
 
                 case NZWEBPLAYER_STATUS_STARTED:
+                    return;
+                    break;
+
+                case NZWEBPLAYER_STATUS_RAWDATA:
                     return;
                     break;
 
