@@ -285,8 +285,9 @@
                 // Initialize video player after rotation is detected
                 initializeV(); // Call your video initialization function (if any)
 
+                console.log("detectRotationToPortrait In orientation: portrait");
                 // Now that the rotation is handled, launch the player
-                launchNzPlayer(app, 'P');  // Use portrait orientation
+                launchNzPlayer(app);
             }
 
         }
@@ -308,8 +309,9 @@
                 // Initialize video player after rotation is detected
                 initializeV(); // Call your video initialization function (if any)
 
+                console.log("detectRotationToLandscape In orientation: landscape");
                 // Now that the rotation is handled, launch the player
-                launchNzPlayer(app, 'L');  // Use portrait orientation
+                launchNzPlayer(app); 
             }
 
         }
@@ -816,10 +818,17 @@
 
             // Only launch if no rotation needed or after rotation is done
             if (bLaunch) {
-                launchNzPlayer(app, orientation);
+                console.log("startNzPlayer In orientation: " + orientation =='P' ? "Portrait" : "Landscape");
+
+                launchNzPlayer(app);
             }
         }
 
+        //------------------------------------------------------------------------------
+        // goBack
+        //! Either goto to previous page in history, or show a please close page [ mainly for embedded browsers ]
+        //! 
+        //------------------------------------------------------------------------------
         function goBack()
         {
             if(g_BackOnClose == true)
@@ -847,12 +856,14 @@
             // }
         }
         
+        //------------------------------------------------------------------------------
+        // waitForStart
+        //! Called when start button has not been clicked in a timely fashion
+        //! 
+        //------------------------------------------------------------------------------
         function waitForStart()
         {
-            console.log("waitForStart, show thanks 0");
-            //goBack();
-            //window.location.href = "_blank";
-            //window.location.href = "./thanks.html";
+            console.log("waitForStart, show thanks");
 
             if(isIOS())
             {
@@ -875,24 +886,23 @@
         //! Start  webplayer
         //!
         //! @param [in] app             App to launch
-        //! @param [in] orientation     Orientation for app
         //------------------------------------------------------------------------------
-        function launchNzPlayer(app, orientation) {
+        function launchNzPlayer(app) {
             let authId      = "get auth_id from Netzyn and put here";
             const appServer = "";
             const extraParam= '';
 
-            console.log("Launching player for app: " + app + " in orientation: " + orientation);
+            console.log("launchNzPlayer Launching player for app: " + app );
 
             window.removeEventListener("resize", detectRotationToLandscape);
             window.removeEventListener("resize", detectRotationToPortrait);
 
-            //Call the player with the correct orientation
+            // Start NzPlayer in the div allocated for it to draw in
             NzPlayerWebBrowser(
                 appServer,
                 'where_to_put_the_video',
                 app,
-                orientation == 'P' ? 'portrait' : 'landscape',
+                '', 
                 encodeURIComponent(authId),
                 encodeURIComponent(getUserName()),
                 encodeURIComponent(extraParam),
