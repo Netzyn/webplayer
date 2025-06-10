@@ -155,10 +155,6 @@
             return username;
         }
 
-
-
-
-
         //------------------------------------------------------------------------------
         // callbackWebPlayerStatus
         //! Status event for webplayer
@@ -190,6 +186,10 @@
             goBack();
         }
 
+        //------------------------------------------------------------------------------
+        // goBack
+        //! Back in the history to previous page
+        //------------------------------------------------------------------------------
         function goBack()
         {
             //window.history.back();
@@ -204,7 +204,6 @@
         {
             let authId      = "get auth_id from Netzyn and put here";
             let app         = new URLSearchParams(window.location.search).get("app");
-            let orientation = new URLSearchParams(window.location.search).get("orient");
             const appServer = null;
             const extraParam= '';
 
@@ -215,14 +214,10 @@
                 return;
             }
 
-            if(orientation == null || orientation == "")
-                orientation = app.includes("_L")  ? "L" :"P";
-
-
             NzPlayerWebBrowser(
                 appServer, 
                 'where_to_put_the_video', 
-                app, orientation == 'P' ? 'portrait' : 'landscape', 
+                '', 
                 encodeURIComponent(authId), 
                 encodeURIComponent(getUserName()), 
                 encodeURIComponent(extraParam), 
