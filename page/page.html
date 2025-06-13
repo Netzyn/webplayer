@@ -12,7 +12,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netzyn</title>
-    <script src="../NzPlayerWebBrowser.js?cachebuster=Math.random()"></script>
+    <!-- <script src="../NzPlayerWebBrowser.js?cachebuster=Math.random()"></script> -->
+    <script>
+        var scriptPath = "../NzPlayerWebBrowser.js?var="; // Example variable
+        scriptPath += Math.random();
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = scriptPath;
+        document.head.appendChild(script);
+    </script>        
 
     <style>
         :root {
@@ -173,7 +181,7 @@
                     return;
                     break;
 
-                case NZWEBPLAYER_STATUS_RAWDATA:
+                case NZWEBPLAYER_STATUS_RECVDATA:
                     return;
                     break;
 

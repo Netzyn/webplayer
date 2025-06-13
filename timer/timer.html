@@ -12,7 +12,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netzyn</title>
-    <script src="../NzPlayerWebBrowser.js?cachebuster=Math.random()"></script>
+    <script>
+        var scriptPath = "../NzPlayerWebBrowser.js?var="; // Example variable
+        scriptPath += Math.random();
+        var script = document.createElement('script');
+        script.type = 'text/javascript';
+        script.src = scriptPath;
+        document.head.appendChild(script);
+    </script>        
+
 
     <style>
         :root {
@@ -509,8 +517,8 @@
                     return;
                     break;
 
-                case NZWEBPLAYER_STATUS_RAWDATA:
-                    handleRawData(data);
+                case NZWEBPLAYER_STATUS_RECVDATA:
+                    handleRecvData(data);
                     return;
                     break;
 
@@ -525,7 +533,7 @@
         }
 
 
-    //************************ For RAWDATA
+    //************************ For SEND/RECVDATA
         //------------------------------------------------------------------------------
         // base64ToIntArray
         //! Convert from base64 to an array of integers
@@ -599,14 +607,14 @@
         }
 
         //------------------------------------------------------------------------------
-        // handleRawData
-        //! Handle raw data from webplayer library
+        // handleRecvData
+        //! Handle app data from cloud app
         //!
         //! @param [in] data        JSON data {string: oidapp, string: oid1, int:param, base64:data}
         //------------------------------------------------------------------------------
-        function handleRawData(data)
+        function handleRecvData(data)
         {
-            console.log("handleRawData = ", data );
+            console.log("handleRecvData = ", data );
             var oidApp = data.oidapp;
             var oid1 = data.oid1;
             var param = data.param;
@@ -617,27 +625,27 @@
             console.log("param  = ", param);
             console.log("data   = ", data);
 
-            // make sure this is the code for a debug string to test the raw data path
+            // make sure this is the code for a debug string to test the recv data path
             if(param !=0xffffffff)
             {
-                alert("Got Raw data");
+                alert("Got RecvData");
 
                 return;
             }
 
             var dataAsString = intArrayOfCharsToString(data);
             console.log("dataAsString  = ", dataAsString);
-            alert("Got Raw data\n" + dataAsString);
+            alert("Got RecvData :\n" + dataAsString);
 
             var retData = stringToByteArrayOfChars("Hello, " + dataAsString);
 
             console.log("retData =",retData);
 
             // tobase64 does not exist with CHrome on ubuntu 22
-            //NzPlayerWebBrowserSendRawData(oidApp, oid1, param, retData.toBase64() );
-            NzPlayerWebBrowserSendRawData(oidApp, oid1, param, uint8ArrayToBase64(retData) );
+            //NzPlayerWebBrowserSendData(oidApp, oid1, param, retData.toBase64() );
+            NzPlayerWebBrowserSendData(oidApp, oid1, param, uint8ArrayToBase64(retData) );
         }
-    //************************ END For RAWDATA
+    //************************ END For SEND/RECVDATA
 
 
 
