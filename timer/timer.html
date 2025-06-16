@@ -21,6 +21,10 @@
         document.head.appendChild(script);
     </script>        
 
+    <script async
+        src="https://pay.google.com/gp/p/js/pay.js"
+        onload="onGooglePayLoaded()">   
+    </script>
 
     <style>
         :root {
@@ -261,6 +265,11 @@
                 </button>
                                 <button style="margin-right: 20px;border: none;" class="close-button" id="close" onclick="handleOnClick()"><img src="assets/XButton.svg"/></button>
                                 <p></p>
+            </div>
+            <div class="sub-bar">
+                 <div id="container">
+
+                 </div>
             </div>
         </div>
 
@@ -612,7 +621,7 @@
         //!
         //! @param [in] data        JSON data {string: oidapp, string: oid1, int:param, base64:data}
         //------------------------------------------------------------------------------
-        function handleRecvData(data)
+        function mnjhandleRecvData(data)
         {
             console.log("handleRecvData = ", data );
             var oidApp = data.oidapp;
@@ -643,7 +652,7 @@
 
             // tobase64 does not exist with CHrome on ubuntu 22
             //NzPlayerWebBrowserSendData(oidApp, oid1, param, retData.toBase64() );
-            NzPlayerWebBrowserSendData(oidApp, oid1, param, uint8ArrayToBase64(retData) );
+            NzPlayerWebBrowserSendData(oidApp, oid1, param, uint8ArrayToBase64(retData));
         }
     //************************ END For SEND/RECVDATA
 
@@ -923,6 +932,8 @@
 
         startNzPlayer();
     </script>
+    <script defer src="./GooglePay.js"
+                onload="onGooglePayLoaded()"></script>
 </body>
 
 </html>
