@@ -1,6 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 
+<!-- remove clear button ttg
+in player, any touch will stop the play button
+
+change how JS is loaded
+
+callback first frame, 
+callback name: appactive
+
+callback for audio created
+
+for rawdata if oidapp empty, replace with only apps' oid
+timer.html will then show button to start -->
 <noscript>
     <head>
         <title>Javscript not enabled</title>
@@ -12,14 +24,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netzyn</title>
-    <script>
+    <script src="../NzPlayerWebBrowser.js?cachebuster=Math.random()"></script>    
+    <!-- <script>
         var scriptPath = "../NzPlayerWebBrowser.js?var="; // Example variable
         scriptPath += Math.random();
         var script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = scriptPath;
         document.head.appendChild(script);
-    </script>        
+    </script>         -->
 
     <script async
         src="https://pay.google.com/gp/p/js/pay.js"
