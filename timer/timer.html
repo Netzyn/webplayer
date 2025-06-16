@@ -34,10 +34,7 @@ timer.html will then show button to start -->
         document.head.appendChild(script);
     </script>         -->
 
-    <script async
-        src="https://pay.google.com/gp/p/js/pay.js"
-        onload="onGooglePayLoaded()">   
-    </script>
+    <script async src="https://pay.google.com/gp/p/js/pay.js"></script>
 
     <style>
         :root {
@@ -278,11 +275,6 @@ timer.html will then show button to start -->
                 </button>
                                 <button style="margin-right: 20px;border: none;" class="close-button" id="close" onclick="handleOnClick()"><img src="assets/XButton.svg"/></button>
                                 <p></p>
-            </div>
-            <div class="sub-bar">
-                 <div id="container">
-
-                 </div>
             </div>
         </div>
 
@@ -634,7 +626,7 @@ timer.html will then show button to start -->
         //!
         //! @param [in] data        JSON data {string: oidapp, string: oid1, int:param, base64:data}
         //------------------------------------------------------------------------------
-        function mnjhandleRecvData(data)
+        function handleRecvData(data)
         {
             console.log("handleRecvData = ", data );
             var oidApp = data.oidapp;
@@ -654,6 +646,13 @@ timer.html will then show button to start -->
 
                 return;
             }
+            
+            if(param != null && param === PAYMENT_REQUEST)
+            {
+                console.log("Recieved Pay request event = ", data);
+                handlePayRequest(data);
+                return;
+            }
 
             var dataAsString = intArrayOfCharsToString(data);
             console.log("dataAsString  = ", dataAsString);
@@ -667,6 +666,42 @@ timer.html will then show button to start -->
             //NzPlayerWebBrowserSendData(oidApp, oid1, param, retData.toBase64() );
             NzPlayerWebBrowserSendData(oidApp, oid1, param, uint8ArrayToBase64(retData));
         }
+
+        
+        //------------------------------------------------------------------------------
+        // handlePayRequest
+        //! Handle payment request from cloud app
+        //!
+        //! @param [in] payData        JSON payment data
+        //------------------------------------------------------------------------------
+
+        function handlePayRequest(payData){
+            console.log("handlePayRequest data = ", payData);
+
+            // Convert the byte array to a string
+            const payDataString = intArrayOfCharsToString(byteArray);
+            console.log("handlePayRequest payDataString = ", payDataString);
+
+            // Parse the JSON string to an object
+            const payDataObj = JSON.parse(payDataString);
+            console.log("handlePayRequest payDataObj = ", payDataObj);
+            
+            if(!isIOS)
+            {
+                launchGooglePay(payDataObj);
+            }
+            else{
+                launchApplePay(payDataObj);
+            }
+        }
+
+
+        // function launchGooglePay(payData)
+        // {
+        //     console.log("launchGooglePay payData = ", payData);
+            
+           
+        // }
     //************************ END For SEND/RECVDATA
 
 
@@ -945,8 +980,7 @@ timer.html will then show button to start -->
 
         startNzPlayer();
     </script>
-    <script defer src="./GooglePay.js"
-                onload="onGooglePayLoaded()"></script>
+    <script defer src="./GooglePay.js"></script>
 </body>
 
 </html>

@@ -15,7 +15,7 @@ const baseRequest = {
    * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#CardParameters|CardParameters}
    * @todo confirm card networks supported by your site and gateway
    */
-  const allowedCardNetworks = ["AMEX", "DISCOVER", "INTERAC", "JCB", "MASTERCARD", "VISA"];
+  const allowedCardNetworks = [];
   
   /**
    * Card authentication methods supported by your site and your gateway
@@ -24,7 +24,7 @@ const baseRequest = {
    * @todo confirm your processor supports Android device tokens for your
    * supported card networks
    */
-  const allowedCardAuthMethods = ["PAN_ONLY", "CRYPTOGRAM_3DS"];
+  const allowedCardAuthMethods = [];
   
   /**
    * Identify your gateway and your site's gateway merchant identifier
@@ -104,16 +104,11 @@ const baseRequest = {
    * @see {@link https://developers.google.com/pay/api/web/reference/request-objects#PaymentDataRequest|PaymentDataRequest}
    * @returns {object} PaymentDataRequest fields
    */
-  function getGooglePaymentDataRequest() {
+  function getGooglePaymentDataRequest(payDataObj) {
     const paymentDataRequest = Object.assign({}, baseRequest);
-    paymentDataRequest.allowedPaymentMethods = [cardPaymentMethod];
-    paymentDataRequest.transactionInfo = getGoogleTransactionInfo();
-    paymentDataRequest.merchantInfo = {
-      // @todo a merchant ID is available for a production environment after approval by Google
-      // See {@link https://developers.google.com/pay/api/web/guides/test-and-deploy/integration-checklist|Integration checklist}
-      // merchantId: '01234567890123456789',
-      merchantName: 'Example Merchant'
-    };
+    paymentDataRequest.allowedPaymentMethods = [payDataObj.allowedPaymentMethods];
+    paymentDataRequest.transactionInfo = payDataObj.transactionInfo;
+    paymentDataRequest.merchantInfo = payDataObj.merchantInfo;
     return paymentDataRequest;
   }
   
@@ -204,7 +199,6 @@ const baseRequest = {
    */
   function launchGooglePay(payDataObj) {
     const paymentDataRequest = getGooglePaymentDataRequest(payDataObj);
-    paymentDataRequest.transactionInfo = getGoogleTransactionInfo(payDataObj);
     
     let environment = payDataObj.environment || 'TEST';
     const paymentsClient = getGooglePaymentsClient(environment);
@@ -227,7 +221,7 @@ const baseRequest = {
    */
   function processPayment(paymentData) {
     // show returned data in developer console for debugging
-      console.log(paymentData);
+      console.log("Payment process data",paymentData);
     // @todo pass payment token to your gateway to process payment
     paymentToken = paymentData.paymentMethodData.tokenizationData.token;
   }
