@@ -71,6 +71,10 @@ const cardPaymentMethod = Object.assign(
   }
 );
 
+const PAYMENT_SUCCESS = 1;
+
+const PAYMENT_FAILURE = 0;
+
 /**
  * An initialized google.payments.api.PaymentsClient object or null if not yet set
  *
@@ -203,20 +207,27 @@ function prefetchGooglePaymentData() {
 /**
  * Show Google Pay payment sheet when Google Pay payment button is clicked
  */
-function launchGooglePay(paydata) {
+function launchGooglePay(payData) {
   
-  const paymentDataRequest = paydata;
+  const paymentDataRequest = payData;
   console.log("paydatarequest",paymentDataRequest);
   const paymentsClient = getGooglePaymentsClient();
   paymentsClient.loadPaymentData(paymentDataRequest)
       .then(function(paymentData) {
         // handle the response
-        sendPaymentData(paymentData);
+        sendPaymentData(PAYMENT_SUCCESS,paymentData); //notify cloud app regarding payment success
       })
       .catch(function(err) {
-        // show error in developer console for debugging
         console.error(err);
+        sendPaymentData(PAYMENT_FAILURE, getPaymentFailureData(err)); //notify cloud app regarding payment failure
       });
+}
+
+function getPaymentFailureData(err) {
+  return {
+    error: err,
+    message: 'Payment failed. Please try again or use a different payment method.'
+  };
 }
 
 /**

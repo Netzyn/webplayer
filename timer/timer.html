@@ -252,8 +252,7 @@ timer.html will then show button to start -->
 
         #paymentPopup {
             position: fixed;
-            top: 0;
-            left: 0;
+            top: 0; left: 0;
             width: 100vw;
             height: 100vh;
             background: rgba(0, 0, 0, 0.6);
@@ -263,23 +262,52 @@ timer.html will then show button to start -->
             z-index: 9999;
         }
 
+        /* Popup content box */
         #paymentPopupContent {
-            background: #fff;
-            padding: 24px 32px;
-            border-radius: 10px;
+            background-color: #fff;
+            color: #000;
+            padding: 30px 40px;
+            border-radius: 12px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25);
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            width: 320px;
+            font-family: sans-serif;
         }
 
-        #paymentPopup button {
+        /* Headline */
+        #paymentPopupContent h3 {
+            margin-top: 0;
+            font-size: 1.5rem;
+        }
+
+        /* Buttons */
+        .popup-btn {
             padding: 10px 20px;
-            font-size: 16px;
-            margin-top: 12px;   
-            cursor: pointer;
+            margin: 12px 8px 0;
+            font-size: 1rem;
+            border-radius: 6px;
             border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .confirm-btn {
             background-color: #0049FF;
             color: #fff;
-            border-radius: 6px;
+        }
+
+        .confirm-btn:hover {
+            background-color: #0036c0;  
+        }
+
+        .cancel-btn {
+            background-color: transparent;
+            border: 2px solid #0049FF;
+            color: #0049FF;
+        }
+
+        .cancel-btn:hover {
+            background-color: #e6edff;
         }
     </style>
 </head>
@@ -315,8 +343,9 @@ timer.html will then show button to start -->
     <div id="paymentPopup">
         <div id="paymentPopupContent">
           <h3>Payment Request</h3>
-          <p>You started a payment from the app. Click below to continue.</p>
-          <button id="continuePaymentBtn">Continue Payment</button>
+          <p>You started a payment from the app. Click continue to proceed!</p>
+          <button class="popup-btn confirm-btn" id="continuePaymentBtn">Continue</button>
+          <button class="popup-btn cancel-btn" id="cancelPaymentBtn">Cancel</button>
         </div>
       </div>
       
@@ -698,13 +727,28 @@ timer.html will then show button to start -->
 
         
         function showPaymentPopup(payDataObj) {
-            const popup = document.getElementById('paymentPopup');
-            popup.style.display = 'flex';
+            document.getElementById("paymentPopup").style.display = "flex";
 
-            document.getElementById('continuePaymentBtn').onclick = () => {
-            popup.style.display = 'none'; // Hide popup
-            launchGooglePay(payDataObj); 
+            document.getElementById("continuePaymentBtn").onclick = () => {
+            document.getElementById("paymentPopup").style.display = "none";
+            launchGooglePay(payDataObj);
             };
+
+            document.getElementById("cancelPaymentBtn").onclick = () => {
+            document.getElementById("paymentPopup").style.display = "none";
+            notifyCancelToServer(); // optional
+            alert("Payment cancelled.");
+            };
+        }
+        
+       
+        function notifyCancelToServer() {
+            console.log("User cancelled payment."); 
+            let paymentFailed = getPaymentFailureData("AbortError: User closed the Payment Request UI.");
+            NzPlayerWebBrowserSendData(null, 
+                                        null,
+                                        NZ_PAYMENT_FAILURE_RESPONSE,
+                                        uint8ArrayToBase64(stringToByteArrayOfChars(JSON.stringify(paymentFailed))));
         }
         
         //------------------------------------------------------------------------------
@@ -734,7 +778,7 @@ timer.html will then show button to start -->
             }
         }
 
-        function sendPaymentData(paymentData){
+        function sendPaymentData(paymentStatus, paymentData){
             console.log("sendPaymentData paymentData = ", paymentData);
             // Convert the payment data to a string
             const paymentDataString = JSON.stringify(paymentData);
@@ -745,7 +789,10 @@ timer.html will then show button to start -->
             console.log("sendPaymentData byteArray = ", byteArray);
 
             // Send the data back to the app
-            NzPlayerWebBrowserSendData(null, null, 0, uint8ArrayToBase64(byteArray));
+            if(paymentStatus === PAYMENT_SUCCESS)
+                NzPlayerWebBrowserSendData(null, null, NZ_PAYMENT_SUCCESS_RESPONSE, uint8ArrayToBase64(byteArray));
+            else
+                NzPlayerWebBrowserSendData(null, null, NZ_PAYMENT_FAILURE_RESPONSE, uint8ArrayToBase64(byteArray));
         }
 
         //************************ END For SEND/RECVDATA
