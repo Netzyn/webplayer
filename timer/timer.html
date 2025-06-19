@@ -3,7 +3,6 @@
 
 <!-- remove clear button ttg
 in player, any touch will stop the play button
-
 change how JS is loaded
 
 callback first frame, 
@@ -251,6 +250,37 @@ timer.html will then show button to start -->
             text-align: center;
         }
 
+        #paymentPopup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.6);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #paymentPopupContent {
+            background: #fff;
+            padding: 24px 32px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        #paymentPopup button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin-top: 12px;   
+            cursor: pointer;
+            border: none;
+            background-color: #0049FF;
+            color: #fff;
+            border-radius: 6px;
+        }
     </style>
 </head>
 
@@ -282,7 +312,14 @@ timer.html will then show button to start -->
             tabindex="-1"></div>
 
     </div>
-
+    <div id="paymentPopup">
+        <div id="paymentPopupContent">
+          <h3>Payment Request</h3>
+          <p>You started a payment from the app. Click below to continue.</p>
+          <button id="continuePaymentBtn">Continue Payment</button>
+        </div>
+      </div>
+      
     <script>
         let g_WaitForStartTimerId   = 0;
         let g_WaitForStartTimeout   = 10000; // 10seconds
@@ -639,15 +676,7 @@ timer.html will then show button to start -->
             console.log("param  = ", param);
             console.log("data   = ", data);
 
-            // make sure this is the code for a debug string to test the recv data path
-            if(param !=0xffffffff)
-            {
-                alert("Got RecvData");
-
-                return;
-            }
-            
-            if(param != null && param === PAYMENT_REQUEST)
+            if(param != null && param === NZ_PAYMENT_REQUEST)  // TODO: update this after testing
             {
                 console.log("Recieved Pay request event = ", data);
                 handlePayRequest(data);
@@ -668,6 +697,16 @@ timer.html will then show button to start -->
         }
 
         
+        function showPaymentPopup(payDataObj) {
+            const popup = document.getElementById('paymentPopup');
+            popup.style.display = 'flex';
+
+            document.getElementById('continuePaymentBtn').onclick = () => {
+            popup.style.display = 'none'; // Hide popup
+            launchGooglePay(payDataObj); 
+            };
+        }
+        
         //------------------------------------------------------------------------------
         // handlePayRequest
         //! Handle payment request from cloud app
@@ -679,31 +718,37 @@ timer.html will then show button to start -->
             console.log("handlePayRequest data = ", payData);
 
             // Convert the byte array to a string
-            const payDataString = intArrayOfCharsToString(byteArray);
-            console.log("handlePayRequest payDataString = ", payDataString);
-
+            const payDataString = intArrayOfCharsToString(payData);
+            console.log("handlePayRequest payDataString = ", payDataString.length);
+            console.log(payDataString);
             // Parse the JSON string to an object
             const payDataObj = JSON.parse(payDataString);
             console.log("handlePayRequest payDataObj = ", payDataObj);
             
-            if(!isIOS)
+            if(isIOS() === false)
             {
-                launchGooglePay(payDataObj);
+                showPaymentPopup(payDataObj)
             }
             else{
                 launchApplePay(payDataObj);
             }
         }
 
+        function sendPaymentData(paymentData){
+            console.log("sendPaymentData paymentData = ", paymentData);
+            // Convert the payment data to a string
+            const paymentDataString = JSON.stringify(paymentData);
+            console.log("sendPaymentData paymentDataString = ", paymentDataString);
 
-        // function launchGooglePay(payData)
-        // {
-        //     console.log("launchGooglePay payData = ", payData);
-            
-           
-        // }
-    //************************ END For SEND/RECVDATA
+            // Convert the string to an array of characters
+            const byteArray = stringToByteArrayOfChars(paymentDataString);
+            console.log("sendPaymentData byteArray = ", byteArray);
 
+            // Send the data back to the app
+            NzPlayerWebBrowserSendData(null, null, 0, uint8ArrayToBase64(byteArray));
+        }
+
+        //************************ END For SEND/RECVDATA
 
 
         //------------------------------------------------------------------------------
