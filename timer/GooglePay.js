@@ -71,9 +71,6 @@ const cardPaymentMethod = Object.assign(
   }
 );
 
-const PAYMENT_SUCCESS = 1;
-
-const PAYMENT_FAILURE = 0;
 
 /**
  * An initialized google.payments.api.PaymentsClient object or null if not yet set
@@ -215,11 +212,11 @@ function launchGooglePay(payData) {
   paymentsClient.loadPaymentData(paymentDataRequest)
       .then(function(paymentData) {
         // handle the response
-        sendPaymentData(PAYMENT_SUCCESS,paymentData); //notify cloud app regarding payment success
+        sendPaymentData(NZ_PAYMENT_SUCCESS_RESPONSE,paymentData); //notify cloud app regarding payment success
       })
       .catch(function(err) {
         console.error(err);
-        sendPaymentData(PAYMENT_FAILURE, getPaymentFailureData(err)); //notify cloud app regarding payment failure
+        sendPaymentData(NZ_PAYMENT_FAILURE_RESPONSE, getPaymentFailureData(err)); //notify cloud app regarding payment failure
       });
 }
 
