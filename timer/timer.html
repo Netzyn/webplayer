@@ -1,25 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<!-- remove clear button ttg
-in player, any touch will stop the play button
-
-change how JS is loaded
-
-callback first frame, 
-callback name: appactive
-
-callback for audio created
-
-for rawdata if oidapp empty, replace with only apps' oid
-timer.html will then show button to start -->
-<noscript>
-    <head>
-        <title>Javscript not enabled</title>
-	    <meta http-equiv="refresh" content="0; url=./enablejs.html" />
-    </head>
-</noscript>
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -272,8 +253,9 @@ timer.html will then show button to start -->
                     <img src="assets/install.svg" alt="Install Icon" style="height: 16px; width: 16px;">
                     Install
                 </button>
-                                <button style="margin-right: 20px;border: none;" class="close-button" id="close" onclick="handleOnClick()"><img src="assets/XButton.svg"/></button>
-                                <p></p>
+                
+                <button style="margin-right: 20px;border: none;" class="close-button" id="close" onclick="handleOnClick()"><img src="assets/XButton.svg"/></button>
+                <p></p>
             </div>
         </div>
 
@@ -283,11 +265,15 @@ timer.html will then show button to start -->
     </div>
 
     <script>
-        let g_WaitForStartTimerId   = 0;
-        let g_WaitForStartTimeout   = 10000; // 10seconds
-        let g_BackOnClose           = true;
+        let g_WaitForStartTimerId       = 0;                //!< Timeout waiting for user to click the "Enjoy the games" play button
+        let g_WaitForStartTimeout       = 10000;            //!< Timeout duration for play button click 10seconds
+        let g_WaitForAppActiveId        = 0;                //!< Timeout waiting for NzPlayerWebBrowser to callback with NZWEBPLAYER_APPACTIVE
+        let g_WaitForAppActiveTimeout   = 10000;            //!< Timeout duration for NZWEBPLAYER_APPACTIVE from NzPlayerWebBrowser
+        let g_BackOnClose               = true;             //!< Flag to control behaviour, TRUE - history.back() on closing
+        let g_buttonStart               = null;             //!< Start button to play audio/video
+	    let g_didResize                 = false;            //!< Flag to indicate if user rotated device to correct orientation
+        let g_timeLeft                  = 300;              //!< Current app demo time remaining (stored/read from localStorage)
 
-	let didResize = false;
         function detectRotationToPortrait(timeoutId) {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -295,7 +281,7 @@ timer.html will then show button to start -->
             // Check if it switched to portrait
             if (width < height) {
                 console.log("Device rotated to Portrait - Showing screen cover");
-		        didResize = true;
+		        g_didResize = true;
                 const element = document.getElementById("rotatescreenportrait");
                 element.style.display = "none"; // Hide the cover
                 element.remove(); // Optionally remove the element
@@ -319,7 +305,7 @@ timer.html will then show button to start -->
             // Check if it switched to portrait
             if (width > height) {
                 console.log("Device rotated to LandScape - Showing screen cover");
-		        didResize = true;
+		        g_didResize = true;
                 const element = document.getElementById("rotatescreenlanscape");
                 element.style.display = "none"; // Hide the cover
                 element.remove(); // Optionally remove the element
@@ -382,7 +368,6 @@ timer.html will then show button to start -->
                     playArea.style.height = (screenHeight - topBarHeight) + "px";
                     appRun.style.marginBottom = `${topBarHeight}px`; // Fixed syntax
             }
-
         }
 
         window.addEventListener("load", () => {
@@ -394,13 +379,13 @@ timer.html will then show button to start -->
 
         });
 
-        let app = new URLSearchParams(window.location.search).get("app");
-        let orientation = new URLSearchParams(window.location.search).get("orient");
-        let install = new URLSearchParams(window.location.search).get("install");
-        let install_ios = new URLSearchParams(window.location.search).get("install_ios");
-        let backOnClose = new URLSearchParams(window.location.search).get("back");
-        let no_install = (install == null || install =="");
-        let no_install_ios = (install_ios == null || install_ios =="");
+        let app             = new URLSearchParams(window.location.search).get("app");
+        let orientation     = new URLSearchParams(window.location.search).get("orient");
+        let install         = new URLSearchParams(window.location.search).get("install");
+        let install_ios     = new URLSearchParams(window.location.search).get("install_ios");
+        let backOnClose     = new URLSearchParams(window.location.search).get("back");
+        let no_install      = (install == null || install =="");
+        let no_install_ios  = (install_ios == null || install_ios =="");
 
         if(backOnClose == null )
             g_BackOnClose = false;
@@ -436,37 +421,32 @@ timer.html will then show button to start -->
             }
         }
 
-
-        let timerleft = 300;
-
         if(localStorage != null && app != null)
-        {
-            timeLeft = localStorage.getItem(app);
-        }
+            g_timeLeft = localStorage.getItem(app);
 
         //*************************************************************************
-        // for this exmaple, so the timer never expires, always start at 300seconds time remaining
-        timeLeft = 300
+        // for this example, ignore the save time and always start at 300seconds time remaining
+        g_timeLeft = 300
         //*************************************************************************
 
         const timerDisplay = document.getElementById("timer");
 
         function updateTimer() {
-            const minutes = Math.floor(timeLeft / 60);
-            const seconds = timeLeft % 60;
+            const minutes = Math.floor(g_timeLeft / 60);
+            const seconds = g_timeLeft % 60;
             timerDisplay.src = "./assets/timer.svg";
             timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-            timeLeft--;
+            g_timeLeft--;
 
             //*************************************************************************
             // for this example, disable saving the time remaining
             // if (localStorage != null)
-            //     localStorage.setItem(app, timeLeft <= 0 ? 0 : timeLeft);
+            //     localStorage.setItem(app, g_timeLeft <= 0 ? 0 : g_timeLeft);
             //*************************************************************************
 
-            if (timeLeft <= 0) { 
+            if (g_timeLeft <= 0) { 
                 const installButton = document.getElementById("install");
-                console.log("pre_applaunch:navigateToPage3:setinterval installbutton=", installButton);
+                console.log("pre_applaunch:Fshutdown_webnavigateToPage3:setinterval installbutton=", installButton);
 
                 NzPlayerWebBrowserPauseMedia();
                 const alertMsg = "Demo time has been exhausted";
@@ -496,15 +476,89 @@ timer.html will then show button to start -->
         }
         
         const installButton = document.getElementById("install");
-        if(installButton != null && install != null && install != "")
+        if(installButton != null)
         {
-            installButton.onclick = () => window.location.href = `${install}`;
+            if(install == null || install == "")
+            {
+                if(isIOS())
+                    install = "https://apps.apple.com";
+                else
+                    install = "https://play.google.com";
+            }
+
+            //installButton.onclick = () => window.location.href = `${install}`;
+            installButton.onclick = () => {
+                window.open(install, "_blank");
+                window.close();
+                goBack();
+            };
         }
-        installButton.onclick = () => {
-            window.open(install, "_blank");
-            window.close();
-            goBack();
-        };
+        
+
+        function showStartButton()
+        {
+            // This method is called on receiving APPACTIVE callback, so stop the timer waiting for it
+            clearTimeout(g_WaitForAppActiveId);
+            g_WaitForAppActiveId = 0;
+
+            const elementForVideo="where_to_put_the_video";
+
+            if(g_buttonStart == null)
+            {
+                // start timeout to wait for start button to be clicked
+                g_WaitForStartTimerId = setTimeout(timeoutWaitForStart, g_WaitForStartTimeout);
+
+                let bBarTop = false; // TODO check if bar at top or bottom, but the quick method is to hard code it!
+
+                console.log("Create PLAY button for browsers's autoplay protection");
+
+                let elementDiv  = document.getElementById(elementForVideo);
+                // const topBar    = document.querySelector(".top-bar");
+                // const appRun    = document.getElementById("app_run");
+                // const playArea  = document.getElementById("where_to_put_the_video");
+                var left        = 0;
+                var top         = 0;
+                var fontsize    = 50;
+                var alpha       = 0.75;
+
+                const divComputedStyle = window.getComputedStyle(elementDiv);
+
+                g_buttonStart = document.createElement('button');
+    //                button.textContent = '\u25BA'; // glyph black right-pointing pointer
+                g_buttonStart.textContent          = 'Enjoy the game! \u25B7'; // glyph white right-pointing triangle
+                g_buttonStart.style.fontSize       = fontsize + "px"
+                g_buttonStart.style.position       = "absolute"
+                g_buttonStart.style.width          = elementDiv.style.width  ? elementDiv.style.width  : divComputedStyle.width; //"200px"
+                g_buttonStart.style.height         = elementDiv.style.height ? elementDiv.style.height : divComputedStyle.height; //"200px"
+                g_buttonStart.style.top            = top + "px";
+                g_buttonStart.style.left           = left + "px";
+                g_buttonStart.style.border         = "none";
+                g_buttonStart.style.color          = "rgb(255, 255, 255)";
+                g_buttonStart.style.backgroundColor= `rgba(0, 0, 0, ${alpha})`;
+                    
+                console.log("divComputedStyle.width  = ", divComputedStyle.width);
+                console.log("divComputedStyle.height = ", divComputedStyle.height);
+                //console.log("divComputedStyle = ", divComputedStyle);
+                console.log(`divwidth=${elementDiv.style.width}, height=${elementDiv.style.height} top=${elementDiv.style.top}, left=${elementDiv.style.left}`)
+                
+                // Add the button to the container
+                elementDiv.appendChild(g_buttonStart);
+
+                g_buttonStart.onclick = () => {
+                    clearTimeout(g_WaitForStartTimerId);
+                    g_WaitForStartTimerId = 0;
+
+                    NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_AUDIO);
+                    NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_VIDEO);
+                
+                    updateTimer(); // start timer counting down
+
+                    g_buttonStart.remove();
+                }
+            }
+
+        }
+
 
         //------------------------------------------------------------------------------
         // callbackWebPlayerStatus
@@ -514,34 +568,78 @@ timer.html will then show button to start -->
         //------------------------------------------------------------------------------
         function callbackWebPlayerStatus(statusId, data)
         {
-            console.log("callbackWebPlayerStatus statusId=", statusId);
-
-            clearTimeout(g_WaitForStartTimerId);
-            g_WaitForStartTimerId = 0;
+            console.log("callbackWebPlayerStatus statusId=", NzPlayerWebBrowserCallbackToString(statusId), " (", statusId, ")");
+            let bClose = false;
 
             switch(statusId)
             {
-                case NZWEBPLAYER_STATUS_UNSUPPORTED_BROWSER:
+                case NZWEBPLAYER_EXIT_UNSUPPORTED_BROWSER:
                     alert("Sorry, this browser is not supported.");
+                    bClose = true;
                     break;
 
-                case NZWEBPLAYER_STATUS_STARTED:
-                    updateTimer();
-                    return;
+                case NZWEBPLAYER_EXIT_ERROR_INVALID_AUTHID:
+                    alert("ERROR Invalid auth_id. Check auth_id passed to NzPlayerWebBrowser()!");
+                    bClose = true;
                     break;
 
-                case NZWEBPLAYER_STATUS_RECVDATA:
+                case NZWEBPLAYER_EXIT_ERROR_INVALID_DIV:
+                    alert("ERROR Invalid HTML div. Check div passed to NzPlayerWebBrowser()!");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_ERROR_NO_APP:
+                    alert("ERROR Invalid app name. Check app name passed to NzPlayerWebBrowser()!");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_ERROR_VERSION_MISMATCH:
+                    alert("ERROR this version of NzPlayerWebBrowser.js is not supported by server!");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_ERROR_LAUNCH:
+                    alert("ERROR launching app!");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_ERROR_POOR_NETWORK:
+                    alert("ERROR current network is unsuitable to reliably run app");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_SERVER_NOT_AVAILABLE:
+                    alert("ERROR no server is available");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_SHUTDOWN:
+                    alert("App has shutdown");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_RECVDATA:
                     handleRecvData(data);
                     return;
                     break;
 
+                case NZWEBPLAYER_APPACTIVE:
+                    console.log("callbackPlayerStatus first video frame");
+                    showStartButton();
+                    break;
+
+
                 default:
-                    alert("Sorry, the app has closed");
+                    alert("Unparsed callback id=" + statusId);
                     break;
             }
 
-            window.close();
-            goBack();
+            if(bClose == true)
+            {
+                console.log("callbackWebPlayerStatus close player because of callback : ", NzPlayerWebBrowserCallbackToString(statusId));
+                window.close();
+                goBack();
+            }
 
         }
 
@@ -661,7 +759,7 @@ timer.html will then show button to start -->
     //************************ END For SEND/RECVDATA
 
 
-
+    //************************ For Save/Read/Generate username
         //------------------------------------------------------------------------------
         // randomUserName
         //! Return a string of given length with random letters
@@ -751,6 +849,8 @@ timer.html will then show button to start -->
             }
             return username;
         }
+    //************************ END Save/Read/Generate username
+
 
         //------------------------------------------------------------------------------
         // startNzPlayer
@@ -799,10 +899,10 @@ timer.html will then show button to start -->
 
                     setTimeout(() => {
                         element.style.display = "none";
-                        timeLeft += 4;
+                        //g_timeLeft += 4;
                         if(localStorage != null)
-                            localStorage.setItem(app, timeLeft);
-                        if(!didResize){
+                            localStorage.setItem(app, g_timeLeft);
+                        if(!g_didResize){
                             window.close();
                             goBack();
                         }
@@ -823,10 +923,10 @@ timer.html will then show button to start -->
                     // The timeout ensures the rotation handling is only after a certain period.
                     setTimeout(() => {
                         element.style.display = "none";
-                        timeLeft += 4;
+                        //g_timeLeft += 4;
                         if(localStorage != null)
-                            localStorage.setItem(app, timeLeft);
-                        if(!didResize){
+                            localStorage.setItem(app, g_timeLeft);
+                        if(!g_didResize){
                             window.close();
                             goBack();
                         }
@@ -878,13 +978,13 @@ timer.html will then show button to start -->
         }
         
         //------------------------------------------------------------------------------
-        // waitForStart
+        // timeoutWaitForStart
         //! Called when start button has not been clicked in a timely fashion
         //! 
         //------------------------------------------------------------------------------
-        function waitForStart()
+        function timeoutWaitForStart()
         {
-            console.log("waitForStart, show thanks");
+            console.log("timeoutWaitForStart, show thanks");
 
             if(isIOS())
             {
@@ -899,6 +999,72 @@ timer.html will then show button to start -->
             {
                 window.location.replace("./playtimeout.html");
             }
+        }
+
+        //------------------------------------------------------------------------------
+        // timeoutAppActive
+        //! Called when appactive callback has not been received in a timely manner...
+        //! 
+        //------------------------------------------------------------------------------
+        function timeoutAppActive()
+        {
+            console.log("waitForAppActive, show thanks and timeout");
+
+            const elementForVideo="where_to_put_the_video";
+
+            let apprunDiv  = document.getElementById("app_run");
+            if(apprunDiv == null)
+                return;
+
+            let elementDiv  = document.getElementById(elementForVideo);
+            if(elementDiv == null)
+                return;
+            
+            elementDiv.remove();
+
+            const divComputedStyle = window.getComputedStyle(apprunDiv);
+
+            var left        = 0; //Math.floor( parseInt(divComputedStyle.width,10) * 0.4 )+ "px";
+            var top         = 0; //Math.floor( parseInt(divComputedStyle.height,10) * 0.4) + "px";;
+            var fontsize    = 50;
+            var alpha       = 0.75;
+
+            console.log("left  = ", left);
+            console.log("top   = ", top);
+
+            console.log("divComputedStyle.width  = ", divComputedStyle.width);
+            console.log("divComputedStyle.height = ", divComputedStyle.height);
+            console.log(`divwidth=${elementDiv.style.width}, height=${elementDiv.style.height} top=${elementDiv.style.top}, left=${elementDiv.style.left}`)
+
+
+            let timeoutText = document.createElement('paragraph');
+            timeoutText.textContent          = 'Timeout waiting for appactive callback';
+            timeoutText.style.fontSize       = fontsize + "px"
+            timeoutText.style.position       = "absolute"
+            timeoutText.style.width          = elementDiv.style.width  ? elementDiv.style.width  : divComputedStyle.width; //"200px"
+            timeoutText.style.height         = elementDiv.style.height ? elementDiv.style.height : divComputedStyle.height; //"200px"
+            timeoutText.style.top            = top + "px";
+            timeoutText.style.left           = left + "px";
+            timeoutText.style.border         = "none";
+            timeoutText.style.color          = "rgb(255, 255, 255)";
+            timeoutText.style.backgroundColor= `rgba(0, 0, 0, ${alpha})`;
+            timeoutText.style.textAlign      = "center";
+            
+            apprunDiv.appendChild(timeoutText);
+
+            // if(isIOS())
+            // {
+            //     if(window.history.length > 1)
+            //     {
+            //         history.go(-(window.history.length - 1));        
+            //     }
+            //     else
+            //         window.location.replace("./playtimeout.html");
+            // }
+            // else
+            // {
+            //     window.location.replace("./playtimeout.html");
+            // }
         }
 
 
@@ -918,6 +1084,9 @@ timer.html will then show button to start -->
             window.removeEventListener("resize", detectRotationToLandscape);
             window.removeEventListener("resize", detectRotationToPortrait);
 
+            // start timeout to wait for APPACTIVE callback
+            g_WaitForAppActiveId = setTimeout(timeoutAppActive, g_WaitForAppActiveTimeout);
+
             // Start NzPlayer in the div allocated for it to draw in
             NzPlayerWebBrowser(
                 appServer,
@@ -929,9 +1098,6 @@ timer.html will then show button to start -->
                 encodeURIComponent(extraParam),
                 callbackWebPlayerStatus
             );
-
-            g_WaitForStartTimerId = setTimeout(waitForStart, g_WaitForStartTimeout);
-
         }
 
         startNzPlayer();

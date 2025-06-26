@@ -2,10 +2,41 @@
 <html lang="en">
 
 <noscript>
-    <head>
+    <!-- <head>
         <title>Javscript not enabled</title>
 	    <meta http-equiv="refresh" content="0; url=./enablejs.html" />
+    </head> -->
+
+    <head>
+        <title>Please enable Javascript</title>
+        <style>
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+        }
+
+        body {
+            display: table;
+        }
+
+        .no-js {
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+            background-color: #FFFFFF !important;
+        }
+        </style>
     </head>
+    <body>
+        <div class="no-js">
+            <h1>Ruh-Roh! Javascript not enabled!</h1>
+            <h1>Please enable Javascript and launch again.</h1>
+        </div>
+    </body>
+
 </noscript>
 
 <head>
@@ -73,6 +104,11 @@
     </div>
 
     <script>
+        let g_buttonStart                       = null;     //!< audio is restricted to user events
+        let g_WaitForAppActiveId                = 0;        //!< Timeout waiting for NzPlayerWebBrowser to callback with NZWEBPLAYER_APPACTIVE
+        let g_WaitForAppActiveTimeout           = 10000;    //!< Timeout duration for NZWEBPLAYER_APPACTIVE from NzPlayerWebBrowser
+
+    //************************ For Save/Read/Generate username
         //------------------------------------------------------------------------------
         // randomUserName
         //! Return a string of given length with random letters
@@ -162,6 +198,63 @@
             }
             return username;
         }
+    //************************ END Save/Read/Generate username
+
+
+    function showStartButton()
+    {
+        clearTimeout(g_WaitForAppActiveId);
+        g_WaitForAppActiveId = 0;
+
+        const elementForVideo="where_to_put_the_video";
+
+        if(g_buttonStart == null)
+        {
+            let bBarTop = false; // TODO check if bar at top or bottom, but the quick method is to hard code it!
+
+            console.log("Create PLAY button for browsers's autoplay protection");
+
+            let elementDiv  = document.getElementById(elementForVideo);
+            // const topBar    = document.querySelector(".top-bar");
+            // const appRun    = document.getElementById("app_run");
+            // const playArea  = document.getElementById("where_to_put_the_video");
+            var left        = 0;
+            var top         = 0;
+            var fontsize    = 50;
+            var alpha       = 0.75;
+
+            const divComputedStyle = window.getComputedStyle(elementDiv);
+
+            g_buttonStart = document.createElement('button');
+//                button.textContent = '\u25BA'; // glyph black right-pointing pointer
+            g_buttonStart.textContent          = 'Enjoy the game! \u25B7'; // glyph white right-pointing triangle
+            g_buttonStart.style.fontSize       = fontsize + "px"
+            g_buttonStart.style.position       = "absolute"
+            g_buttonStart.style.width          = elementDiv.style.width  ? elementDiv.style.width  : divComputedStyle.width; //"200px"
+            g_buttonStart.style.height         = elementDiv.style.height ? elementDiv.style.height : divComputedStyle.height; //"200px"
+            g_buttonStart.style.top            = top + "px";
+            g_buttonStart.style.left           = left + "px";
+            g_buttonStart.style.border         = "none";
+            g_buttonStart.style.color          = "rgb(255, 255, 255)";
+            g_buttonStart.style.backgroundColor= `rgba(0, 0, 0, ${alpha})`;
+                
+            console.log("divComputedStyle.width  = ", divComputedStyle.width);
+            console.log("divComputedStyle.height = ", divComputedStyle.height);
+            //console.log("divComputedStyle = ", divComputedStyle);
+            console.log(`divwidth=${elementDiv.style.width}, height=${elementDiv.style.height} top=${elementDiv.style.top}, left=${elementDiv.style.left}`)
+            
+            // Add the button to the container
+            elementDiv.appendChild(g_buttonStart);
+
+            g_buttonStart.onclick = () => {
+                NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_AUDIO);
+                NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_VIDEO);
+              
+                g_buttonStart.remove();
+            }
+        }
+
+    }
 
         //------------------------------------------------------------------------------
         // callbackWebPlayerStatus
@@ -171,27 +264,77 @@
         //------------------------------------------------------------------------------
         function callbackWebPlayerStatus(statusId, data)
         {
+            console.log("callbackWebPlayerStatus statusId=", NzPlayerWebBrowserCallbackToString(statusId), " (", statusId, ")");
+            let bClose = false;
+
             switch(statusId)
             {
-                case NZWEBPLAYER_STATUS_UNSUPPORTED_BROWSER:
+                case NZWEBPLAYER_EXIT_UNSUPPORTED_BROWSER:
                     alert("Sorry, this browser is not supported.");
+                    bClose = true;
                     break;
 
-                case NZWEBPLAYER_STATUS_STARTED:
-                    return;
+                case NZWEBPLAYER_EXIT_ERROR_INVALID_AUTHID:
+                    alert("ERROR Invalid auth_id. Check auth_id passed to NzPlayerWebBrowser()!");
+                    bClose = true;
                     break;
 
-                case NZWEBPLAYER_STATUS_RECVDATA:
-                    return;
+                case NZWEBPLAYER_EXIT_ERROR_INVALID_DIV:
+                    alert("ERROR Invalid HTML div. Check div passed to NzPlayerWebBrowser()!");
+                    bClose = true;
                     break;
+
+                case NZWEBPLAYER_EXIT_ERROR_NO_APP:
+                    alert("ERROR Invalid app name. Check app name passed to NzPlayerWebBrowser()!");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_ERROR_VERSION_MISMATCH:
+                    alert("ERROR this version of NzPlayerWebBrowser.js is not supported by server!");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_ERROR_LAUNCH:
+                    alert("ERROR launching app!");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_ERROR_POOR_NETWORK:
+                    alert("ERROR current network is unsuitable to reliably run app");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_EXIT_SERVER_NOT_AVAILABLE:
+                    alert("ERROR no server is available");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_SHUTDOWN:
+                    alert("App has shutdown");
+                    bClose = true;
+                    break;
+
+                case NZWEBPLAYER_RECVDATA:
+                    console.log("callbackWebPlayerStatus RECVDATA");
+                    break;
+
+                case NZWEBPLAYER_APPACTIVE:
+                    console.log("callbackPlayerStatus first video frame");
+                    showStartButton();
+                    break;
+
 
                 default:
-                    alert("Sorry, the app has closed");
+                    alert("Unparsed callback id=" + statusId);
                     break;
             }
 
-            window.close();
-            goBack();
+            console.log("callbackWebPlayerStatus statusId=", statusId, ", bClose=", bClose);
+            if(bClose == true)
+            {
+                window.close();
+                goBack();
+            }
         }
 
         //------------------------------------------------------------------------------
@@ -202,6 +345,72 @@
         {
             //window.history.back();
             history.go(-(window.history.length - 1));        
+        }
+
+        //------------------------------------------------------------------------------
+        // timeoutAppActive
+        //! Called when appactive callback has not been received in a timely manner...
+        //! 
+        //------------------------------------------------------------------------------
+        function timeoutAppActive()
+        {
+            console.log("waitForAppActive, show thanks and timeout");
+
+            const elementForVideo="where_to_put_the_video";
+
+            let apprunDiv  = document.getElementById("app_run");
+            if(apprunDiv == null)
+                return;
+
+            let elementDiv  = document.getElementById(elementForVideo);
+            if(elementDiv == null)
+                return;
+            
+            elementDiv.remove();
+
+            const divComputedStyle = window.getComputedStyle(apprunDiv);
+
+            var left        = 0; //Math.floor( parseInt(divComputedStyle.width,10) * 0.4 )+ "px";
+            var top         = 0; //Math.floor( parseInt(divComputedStyle.height,10) * 0.4) + "px";;
+            var fontsize    = 50;
+            var alpha       = 0.75;
+
+            console.log("left  = ", left);
+            console.log("top   = ", top);
+
+            console.log("divComputedStyle.width  = ", divComputedStyle.width);
+            console.log("divComputedStyle.height = ", divComputedStyle.height);
+            console.log(`divwidth=${elementDiv.style.width}, height=${elementDiv.style.height} top=${elementDiv.style.top}, left=${elementDiv.style.left}`)
+
+
+            let timeoutText = document.createElement('paragraph');
+            timeoutText.textContent          = 'Timeout waiting for appactive callback';
+            timeoutText.style.fontSize       = fontsize + "px"
+            timeoutText.style.position       = "absolute"
+            timeoutText.style.width          = elementDiv.style.width  ? elementDiv.style.width  : divComputedStyle.width; //"200px"
+            timeoutText.style.height         = elementDiv.style.height ? elementDiv.style.height : divComputedStyle.height; //"200px"
+            timeoutText.style.top            = top + "px";
+            timeoutText.style.left           = left + "px";
+            timeoutText.style.border         = "none";
+            timeoutText.style.color          = "rgb(255, 255, 255)";
+            timeoutText.style.backgroundColor= `rgba(0, 0, 0, ${alpha})`;
+            timeoutText.style.textAlign      = "center";
+            
+            apprunDiv.appendChild(timeoutText);
+
+            // if(isIOS())
+            // {
+            //     if(window.history.length > 1)
+            //     {
+            //         history.go(-(window.history.length - 1));        
+            //     }
+            //     else
+            //         window.location.replace("./playtimeout.html");
+            // }
+            // else
+            // {
+            //     window.location.replace("./playtimeout.html");
+            // }
         }
 
         //------------------------------------------------------------------------------
@@ -222,9 +431,13 @@
                 return;
             }
 
+            // start timeout to wait for APPACTIVE callback
+            g_WaitForAppActiveId = setTimeout(timeoutAppActive, g_WaitForAppActiveTimeout);
+
             NzPlayerWebBrowser(
                 appServer, 
                 'where_to_put_the_video', 
+                encodeURIComponent(app),
                 '', 
                 encodeURIComponent(authId), 
                 encodeURIComponent(getUserName()), 
