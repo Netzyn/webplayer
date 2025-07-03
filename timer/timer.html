@@ -729,6 +729,11 @@ timer.html will then show button to start -->
                     handleMerchantValidationResult(data);
                     return;
                     break;
+                case NZ_APPLE_PAYMENT_STATUS:
+                    console.log("Recieved Apple Pay Status = ", data);
+                    handleApplePaymentStatus(data);
+                    return;
+                    break;
                 default:
                     console.log("Recieved param = ", param);
                     break;
@@ -804,18 +809,46 @@ timer.html will then show button to start -->
             return window.ApplePaySession && ApplePaySession.canMakePayments();
         }
         
-        function handleMerchantValidationResult(data){
-            if (window._merchantValidationPromise &&
-                data.requestId) {
+        function handleMerchantValidationResult(merchantSessionData){
+            console.log(window._merchantValidationPromise);
+            const merchantSessionDataString = intArrayOfCharsToString(merchantSessionData);
+            console.log("merchantSessionDataString");
+            console.log(merchantSessionDataString);
 
-                if (data.session) {
-                    window._merchantValidationPromise.resolve(data.session);
+            const merchantSessionDataObj = JSON.parse(merchantSessionDataString);
+            console.log("merchantSessionDataObj", merchantSessionDataObj);
+
+            if (window._merchantValidationPromise) {
+
+                if (merchantSessionData) {
+                    window._merchantValidationPromise.resolve(merchantSessionDataObj);
                 } else {
-                    console.error("Merchant validation failed:", data.error || "unknown error");
+                    console.error("Merchant validation failed:", merchantSessionDataObj.error || "unknown error");
                     window._merchantValidationPromise.reject("Validation error");
                 }
 
                 window._merchantValidationPromise = null;
+            }
+        }
+
+        async function handleApplePaymentStatus(data){
+            console.log("handleApplePaymentStatus data = ", data);
+
+            // Convert the byte array to a string
+            const dataString = intArrayOfCharsToString(data);
+            console.log("handleApplePaymentStatus dataString = ", dataString.length);
+            console.log(dataString);
+
+            // Parse the JSON string to an object
+            const paymentData = JSON.parse(dataString);
+            console.log("handleApplePaymentStatus paymentData = ", paymentData);
+
+            if(window.applePaymentResponse){
+                await window.applePaymentResponse.complete(paymentData.status);
+                return window.applePaymentResponse;
+            }
+            else{
+                console.error("No applePaymentResponse found, cannot complete payment");
             }
         }
 
@@ -1083,8 +1116,8 @@ timer.html will then show button to start -->
         //! @param [in] app             App to launch
         //------------------------------------------------------------------------------
         function launchNzPlayer(app) {
-            let authId      = "cloud";
-            const appServer = "webplayer.nz-naas.com";
+            let authId      = "get auth_id from Netzyn and put here";
+            const appServer = "";
             const extraParam= '';
 
             console.log("launchNzPlayer Launching player for app: " + app );
@@ -1105,7 +1138,6 @@ timer.html will then show button to start -->
             );
 
             g_WaitForStartTimerId = setTimeout(waitForStart, g_WaitForStartTimeout);
-
         }
 
         startNzPlayer();
