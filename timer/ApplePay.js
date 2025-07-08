@@ -16,11 +16,25 @@ async function onApplePayButtonClicked(payDataObj) {
             const requestId = "req_" + Date.now();
           
             window._merchantValidationPromise = {};
+            window._merchantValidationPromiseSettled = false;
             window._merchantValidationPromise.promise = new Promise((resolve, reject) => {
-              window._merchantValidationPromise.resolve = resolve;
-              window._merchantValidationPromise.reject = reject;
+              window._merchantValidationPromise.resolve = (session) => {
+                window._merchantValidationPromiseSettled = true;
+                resolve(session);
+              };
+              window._merchantValidationPromise.reject = (error) => {
+                window._merchantValidationPromiseSettled = true;
+                reject(error);
+              };
             });
-          
+
+            setTimeout(() => {
+              if (!window._merchantValidationPromiseSettled) {
+                console.error("Merchant validation promise was not resolved in time.");
+                window._merchantValidationPromise.reject(new Error("Merchant validation timed out."));
+              }
+            },10000); // Timeout after 10 seconds
+
             const msg = {
               event: "merchant_validation",
               requestId,
@@ -30,6 +44,7 @@ async function onApplePayButtonClicked(payDataObj) {
                     
             event.complete(window._merchantValidationPromise.promise);
           };
+          
         request.onpaymentmethodchange = event => {
           event.updateWith({});
         };

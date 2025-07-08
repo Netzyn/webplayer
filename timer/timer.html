@@ -346,7 +346,6 @@ timer.html will then show button to start -->
                                 <button style="margin-right: 20px;border: none;" class="close-button" id="close" onclick="handleOnClick()"><img src="assets/XButton.svg"/></button>
                                 <p></p>
             </div>
-        <apple-pay-button buttonstyle="black" type="plain" locale="en-US" onclick="onApplePayButtonClicked()"></apple-pay-button>
         </div>
 
         <div visibility: visible class="box" id="where_to_put_the_video" object-fit="fill" background="black"
@@ -420,6 +419,10 @@ timer.html will then show button to start -->
             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         }
         
+        function isMobileDevice() {
+        return /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+        }
+
         function initializeV()
         {
             const screenWidth = window.innerWidth;
@@ -800,8 +803,17 @@ timer.html will then show button to start -->
             // Parse the JSON string to an object
             const payDataObj = JSON.parse(payDataString);
             console.log("handlePayRequest payDataObj = ", payDataObj);
-            showPaymentPopup(payDataObj)
-            
+            if(isMobileDevice() === false)
+            {
+                const errorPayload = {
+                    error: true,
+                    message: "This feature is only supported on mobile devices.",
+                };
+                sendPaymentData(NZ_PAYMENT_FAILURE_RESPONSE, errorPayload);
+                return;
+            }
+
+            showPaymentPopup(payDataObj);
         }
 
         function isApplePayAvailable() {
