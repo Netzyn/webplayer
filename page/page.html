@@ -323,7 +323,11 @@
                     showStartButton();
                     break;
 
+                case NZWEBPLAYER_VERSION:
+                    console.log("callbackPlayerStatus Version : " + data);
+                    break;
 
+                // for this example we want to print/show something for all callbacks!
                 default:
                     alert("Unparsed callback id=" + statusId);
                     break;
