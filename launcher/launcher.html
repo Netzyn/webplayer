@@ -49,15 +49,12 @@
             if(urlWithToolbar == null)
                 return;
 
-            let install;
-           
             urlWithToolbar.getAttribute("href");
-            if(getMobileStoreUrlKey() == "storeand")
-               install="https://play.google.com/store/apps/details?id=com.king.candycrushsaga";
-            else
-               install="https://apps.apple.com/us/app/candy-crush-saga/id553834731";
+            //if(getMobileStoreUrlKey() == "storeand")
+            let installAndroid="https://play.google.com/store/apps/details?id=com.king.candycrushsaga";
+            let installIos="https://apps.apple.com/us/app/candy-crush-saga/id553834731";
 
-            var hrefWithToolbar = '../timer/timer.html?app=' + encodeURIComponent(app) + `&orient=` + orient + `&install=` + encodeURIComponent(install);
+            var hrefWithToolbar = '../timer/timer.html?app=' + encodeURIComponent(app) + `&orient=` + orient + `&install=` + encodeURIComponent(installAndroid) + `install_ios=` + encodeURIComponent(installIos);
             urlWithToolbar.setAttribute("href", hrefWithToolbar);
 
         }
