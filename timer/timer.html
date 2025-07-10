@@ -353,6 +353,8 @@
         let g_buttonStart               = null;             //!< Start button to play audio/video
 	    let g_didResize                 = false;            //!< Flag to indicate if user rotated device to correct orientation
         let g_timeLeft                  = 300;              //!< Current app demo time remaining (stored/read from localStorage)
+        let OID_APP                      = null;             //!< OID of app
+        let OID_1                        = null;             //!< seondary OID of app if any
 
         function detectRotationToPortrait(timeoutId) {
             const width = window.innerWidth;
@@ -818,6 +820,9 @@
             var oid1 = data.oid1;
             var param = data.param;
             var data = base64ToIntArray(data.data);
+            
+            OID_APP = oidApp;
+            OID_1 = oid1;
 
             console.log("oidApp = ", oidApp);
             console.log("oid1   = ", oid1);
@@ -830,7 +835,7 @@
                     handlePayRequest(data);
                     return;
                     break;
-                case NZ_PAYMENT_MERCHANT_VALIDATION_RESULT:
+                case NZ_PAYMENT_MERCHANT_VALIDATION_RESPONSE:
                     console.log("Recieved Merchant Validation Result = ", data);
                     handleMerchantValidationResult(data);
                     return;
@@ -913,6 +918,7 @@
                     message: "This feature is only supported on mobile devices.",
                 };
                 sendPaymentData(NZ_PAYMENT_FAILURE_RESPONSE, errorPayload);
+                alert("This feature is only supported on mobile devices.");
                 return;
             }
 
@@ -978,7 +984,7 @@
             console.log("sendPaymentData byteArray = ", byteArray);
 
             // Send the data back to the app
-            NzPlayerWebBrowserSendData(null, null, paymentStatusParam, uint8ArrayToBase64(byteArray));
+            NzPlayerWebBrowserSendData(OID_APP, OID_1, paymentStatusParam, uint8ArrayToBase64(byteArray));
         }
 
         //************************ END For SEND/RECVDATA
