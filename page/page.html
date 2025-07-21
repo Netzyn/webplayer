@@ -333,7 +333,7 @@
                     break;
             }
 
-            console.log("callbackWebPlayerStatus statusId=", statusId, ", bClose=", bClose);
+            console.log("callbackWebPlayerStatus statusId=", NzPlayerWebBrowserCallbackToString(statusId), " (", statusId, "), bClose=", bClose);
             if(bClose == true)
             {
                 window.close();

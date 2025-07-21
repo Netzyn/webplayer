@@ -919,6 +919,7 @@
                     break;
             }
 
+            console.log("callbackWebPlayerStatus statusId=", NzPlayerWebBrowserCallbackToString(statusId), " (", statusId, "), bClose=", bClose);
             if(bClose == true)
             {
                 console.log("callbackWebPlayerStatus close player because of callback : ", NzPlayerWebBrowserCallbackToString(statusId));
