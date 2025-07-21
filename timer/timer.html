@@ -1184,6 +1184,10 @@
             return window.ApplePaySession && ApplePaySession.canMakePayments();
         }
         
+        //------------------------------------------------------------------------------
+        // Resolve Merchant Validation promise stored in window object for current apple pay session
+        // @param [in] merchantSessionData    Apple pay session Json object sent from cloud app
+        // ------------------------------------------------------------------------------
         function handleMerchantValidationResult(merchantSessionData){
             console.log(window._merchantValidationPromise);
             const merchantSessionDataString = intArrayOfCharsToString(merchantSessionData);
@@ -1206,6 +1210,13 @@
             }
         }
 
+        //------------------------------------------------------------------------------
+        // Process the final Apple pay payment status sent from the cloud app
+        // Ex:
+        //     data = {status: "success"}
+        //      data = {status: "failure"}
+        // @param [in] data    Apple pay payment status data
+        //------------------------------------------------------------------------------ 
         async function handleApplePaymentStatus(data){
             console.log("handleApplePaymentStatus data = ", data);
 
@@ -1226,7 +1237,14 @@
                 console.error("No applePaymentResponse found, cannot complete payment");
             }
         }
-
+        
+        //------------------------------------------------------------------------------
+        // helper function to send payment status data back to the app
+        // Example:
+        //     paymentStatusParam = NZ_PAYMENT_SUCCESS_RESPONSE & paymentData = {"apiVersion":2,"apiVersionMinor":0,"paymentMethodData":{"type":"CARD","description":"Visa •••• 1234","info":{"cardNetwork":"VISA","cardDetails":"1234"},"tokenizationData":{"type":"PAYMENT_GATEWAY","token":"examplePaymentMethodToken"}}}
+        //! @param [in] paymentStatusParam    Payment status parameter to send back to the app
+        //! @param [in] paymentData            Payment data to send back to the app
+        //------------------------------------------------------------------------------
         function sendPaymentData(paymentStatusParam, paymentData){
             console.log("sendPaymentData paymentData = ", paymentData);
             // Convert the payment data to a string
