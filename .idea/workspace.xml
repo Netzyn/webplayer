@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="b916be6e-da8a-46c2-aaaa-240245f6a63c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/timer/timer.html" beforeDir="false" afterPath="$PROJECT_DIR$/timer/timer.html" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
+  <component name="ProjectId" id="2y9MxZYenobGmUy1iC7Ixwr6JIm" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dart.analysis.tool.window.visible": "false",
+    "git-widget-placeholder": "google-pay-integrate",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/nzos/Documents/work/nzwebplayer",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "ml.llm.AIAssistantPromptsLibrary",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-b26f3e71634d-JavaScript-WS-251.26094.131" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b916be6e-da8a-46c2-aaaa-240245f6a63c" name="Changes" comment="" />
+      <created>1749242582963</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1749242582963</updated>
+      <workItem from="1749242584374" duration="11238000" />
+      <workItem from="1749496378412" duration="59000" />
+      <workItem from="1749498299459" duration="468000" />
+      <workItem from="1749500313328" duration="46000" />
+      <workItem from="1749500530507" duration="48856000" />
+      <workItem from="1750178480057" duration="1833000" />
+      <workItem from="1750372282503" duration="8275000" />
+      <workItem from="1751406968872" duration="1455000" />
+      <workItem from="1752075449984" duration="5000" />
+      <workItem from="1752604084897" duration="3573000" />
+      <workItem from="1752701196302" duration="2000" />
+      <workItem from="1753302510541" duration="29000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="resizes play area and centers the div" />
+    <option name="LAST_COMMIT_MESSAGE" value="resizes play area and centers the div" />
+    <option name="LAST_CHUNK_COMMIT_MESSAGE" value="resizes play area and centers the div" />
+  </component>
+</project>
