@@ -22,15 +22,11 @@
             --width-dvw: 100%;
             --height-dvh: 100%;
         }
+
         body,
         html {
             margin: 0;
             padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: var(--width-dvw);
-            height: var(--height-dvh);
             font-family: Arial, sans-serif;
             background-color: #01203a !important;
         }
@@ -41,6 +37,7 @@
             /* width: 100%; */
             width: var(--width-dvw);
             height: var(--height-dvh);
+            position: absolute;
         }
 
         video {
@@ -51,47 +48,39 @@
             height: var(--height-dvh);
         }
 
-        /* Top bar styling */
+        
         .top-bar {
             width: 100%;
             height: 50px;
-            /* background-color: #01203a; */
             background-color: #FFFFFF;
             color: #fff;
             flex-direction: row;
             display: flex;
             justify-content: space-between;
-            /* Distribute buttons evenly */
             align-items: center;
-            /* Align items vertically in the center */
-            position: fixed;
-            /* top: 0; */ /* bar at top */
-            bottom: 0; /* bar at bottom */
+            position: absolute;
+            bottom: 0; 
             left: 0;
             z-index: 1000;
             font-size: 20px;
             font-weight: bold;
             padding: 0 10px;
-            /* Add some padding for spacing */
         }
 
         .sub-bar {
             width: 100%;
             height: 50px;
             display: flex;
-            /* background-color: #01203a; */
             background-color: #FFFFFF;
             color: #fff;
             display: flex;
             justify-content: flex-end;
             flex-direction: row;
-            /* Distribute buttons evenly */
             align-items: center;
             font-size: 20px;
             font-weight: bold;
             padding: 0 10px;
             row-gap: 3px;
-            /* Add some padding for spacing */
         }
 
 
@@ -138,9 +127,20 @@
         }
 
         #app_run {
-            /* width: 100%; */
             width: var(--width-dvw);
             height: var(--height-dvh);
+            position: relative;
+            background-color: #01203a;
+        }
+
+        #app_run.locked {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100%;
+            z-index: 1000;
+            overflow: hidden;
         }
 
         .close-button {
@@ -179,7 +179,6 @@
             .start-button {
                 font-size: 22x;
             }
-
         }
         
         .install-arrow-box {
@@ -190,7 +189,6 @@
             text-align: center;
             font-color: #000000;
             background-color: #ADD8E6;
-
         }      
         
         #rotatescreenlanscape {
@@ -206,12 +204,9 @@
             margin: 0 !important;
             z-index: 9999;
             touch-action: none;
-
-
         }
 
         #rotatescreenportrait {
-            /* width: 100%; */
             width: 100%;
             height: 100%;
             position: absolute;
@@ -224,6 +219,7 @@
             z-index: 9999;
             touch-action: none;
         }
+
         .content {
             display: flex;
             align-items: center;
@@ -231,39 +227,78 @@
             text-align: center;
         }
 
+        .page-section {
+            height: 100vh;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .page-section h1 {
+            font-family: Impact, 'Arial Narrow Bold', sans-serif;
+            text-align: center;
+            font-size: 4rem;
+            color: white;
+            margin: 0;
+        }
+
+        h1 {
+            font-family: Impact, 'Arial Narrow Bold', sans-serif;
+            text-align: center;
+            /* top: 40vh; */
+            position: relative;
+            color: white;
+        }
+        .page-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .page-2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .page-3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
     </style>
 </head>
 
 <body>
-    <div id="app_run" >
+    <div class="page-section page-1">
+        <h1>Welcome to Netzyn</h1>
+        <h1>Experience Gaming</h1>
+        <h1>Scroll to Play</h1>
+    </div>
+
+    <!-- App section that will lock when scrolled to -->
+    <div id="app_run" class="page-section">
         <img id="rotatescreenlanscape" src="assets/rotate-L.gif" />
         <img id="rotatescreenportrait" src="assets/rotate-P.gif" />
+        <div class="box" id="where_to_put_the_video" tabindex="-1"></div>
         <div class="top-bar" id="apprun_topbar">
             <div style="justify-content: flex-start;" class="sub-bar">
-                <div class="app-icon" style="place-items: center;margin-top: 5px;" id="netzyn_logo="><img src="assets/netzyn_logo-05.svg" width="75" height="30"/></div>
+                <div class="app-icon" style="place-items: center;margin-top: 5px;" id="netzyn_logo"><img src="assets/netzyn_logo-05.svg" width="75" height="30"/></div>
             </div>
 
             <div class="sub-bar">
                 <div class="start-button-container">
-                    
                     <img src="assets/timer.svg">
                     <button class="start-button" style="padding-right: 0%;margin-right: 0%;padding-left: 0%;margin-left: 10%;" id="timer">5:00</button>
                 </div>            
-                <button style="display: flex; align-items: center; gap: 5px; margin-right: 10px;border: none;" class="install-button" id="install" onclick="handleInstall()">
+                <button style="display: flex; align-items: center; gap: 5px; margin-right: 10px;border: none;" class="install-button" id="install">
                     <img src="assets/install.svg" alt="Install Icon" style="height: 16px; width: 16px;">
                     Install
                 </button>
                 
-                <button style="margin-right: 20px;border: none;" class="close-button" id="close" onclick="handleOnClick()"><img src="assets/XButton.svg"/></button>
-                <p></p>
+                <button style="margin-right: 20px;border: none;" class="close-button" id="close"><img src="assets/XButton.svg"/></button>
             </div>
         </div>
-
-        <div visibility: visible class="box" id="where_to_put_the_video" object-fit="fill" background="black"
-            tabindex="-1"></div>
-
     </div>
-
+    
     <script>
         let g_WaitForStartTimerId       = 0;                //!< Timeout waiting for user to click the "Enjoy the games" play button
         let g_WaitForStartTimeout       = 10000;            //!< Timeout duration for play button click 10seconds
@@ -273,6 +308,7 @@
         let g_buttonStart               = null;             //!< Start button to play audio/video
 	    let g_didResize                 = false;            //!< Flag to indicate if user rotated device to correct orientation
         let g_timeLeft                  = 300;              //!< Current app demo time remaining (stored/read from localStorage)
+        let nzPlayerStarted             = false;            //!< Flag to indicate if the player has started
 
         function detectRotationToPortrait(timeoutId) {
             const width = window.innerWidth;
@@ -298,6 +334,37 @@
             }
 
         }
+
+        document.addEventListener('scroll', (event) => {
+                const playArea = document.getElementById('app_run');
+                const topBar = document.querySelector('.top-bar')
+                const rect = playArea.getBoundingClientRect();
+                console.log("Scroll event detected, rect=", rect);
+                if (rect.top >= 0 && 
+                    rect.left >= 0 && 
+                    (rect.bottom*0.80) <= (window.innerHeight || document.documentElement.clientHeight) && 
+                    rect.right <= (window.innerWidth || document.documentElement.clientWidth)) {
+                        playArea.style.position = 'fixed';
+                        playArea.style.top = '0px';
+                        playArea.style.left = '0px';
+                        topBar.style.position = 'fixed';
+                        // window.scrollTo(0, 0);
+                        document.body.style.overflow = 'hidden';
+                        document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+                        if(!nzPlayerStarted)
+                        {
+                            initializeV(); // Call your video initialization function (if any)
+                            console.log("starting nz player");
+                            startNzPlayer();
+                            nzPlayerStarted = true; // Set a flag to indicate that the player has started
+                        }   
+                }
+            });
+
+        scrollToTop = ()=>{ window.scrollTo(0,0); document.body.removeEventListener('touchstart', scrollToTop) }
+        document.body.addEventListener('touchstart', scrollToTop)
+
         function detectRotationToLandscape(timeoutId) {
             const width = window.innerWidth;
             const height = window.innerHeight;
@@ -322,6 +389,7 @@
             }
 
         }
+
         function isIOS() {
             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         }
@@ -1104,8 +1172,6 @@
                 callbackWebPlayerStatus
             );
         }
-
-        startNzPlayer();
     </script>
 </body>
 
