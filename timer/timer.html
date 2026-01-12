@@ -1,135 +1,108 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netzyn</title>
+    <title>Netzyn Web Player</title>
     <script src="../NzPlayerWebBrowser.js?cachebuster=Math.random()"></script>    
-    <!-- <script>
-        var scriptPath = "../NzPlayerWebBrowser.js?var="; // Example variable
-        scriptPath += Math.random();
-        var script = document.createElement('script');
-        script.type = 'text/javascript';
-        script.src = scriptPath;
-        document.head.appendChild(script);
-    </script>         -->
-
 
     <style>
         :root {
-            /* --height-dvh: 100vh; */
             --width-dvw: 100%;
             --height-dvh: 100%;
         }
-        body,
-        html {
+
+        body, html {
             margin: 0;
             padding: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: var(--width-dvw);
-            height: var(--height-dvh);
             font-family: Arial, sans-serif;
-            background-color: #01203a !important;
+            background-color: #000 !important;
+            overflow-x: hidden;
         }
 
         .box {
-            background: #01203a;
+            background: #000;
             object-fit: fill;
-            /* width: 100%; */
             width: var(--width-dvw);
             height: var(--height-dvh);
+            position: absolute;
         }
 
         video {
             background: black;
             object-fit: fill;
-            /* width: 100%; */
             width: var(--width-dvw);
             height: var(--height-dvh);
         }
-
-        /* Top bar styling */
+        
         .top-bar {
             width: 100%;
             height: 50px;
-            /* background-color: #01203a; */
             background-color: #FFFFFF;
             color: #fff;
             flex-direction: row;
             display: flex;
             justify-content: space-between;
-            /* Distribute buttons evenly */
             align-items: center;
-            /* Align items vertically in the center */
-            position: fixed;
-            /* top: 0; */ /* bar at top */
-            bottom: 0; /* bar at bottom */
+            position: absolute;
+            bottom: 0; 
             left: 0;
             z-index: 1000;
             font-size: 20px;
             font-weight: bold;
             padding: 0 10px;
-            /* Add some padding for spacing */
         }
 
         .sub-bar {
             width: 100%;
             height: 50px;
             display: flex;
-            /* background-color: #01203a; */
             background-color: #FFFFFF;
             color: #fff;
-            display: flex;
             justify-content: flex-end;
             flex-direction: row;
-            /* Distribute buttons evenly */
             align-items: center;
             font-size: 20px;
             font-weight: bold;
             padding: 0 10px;
             row-gap: 3px;
-            /* Add some padding for spacing */
         }
 
-
-        /* Button styling */
         .start-button {
-            padding: 8px 18px;
+            padding: 4px 12px;
             color: #000000;
             background-color: #ffffff;
-            /* Add a background color for contrast */
             border: none;
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
+            line-height: 1.2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .start-button-container {
-            padding: 8px 18px;
+         .start-button-container {
+            padding: 4px 12px;
             color: #000000;
             background-color: #ffffff;
-            /* Add a background color for contrast */
             border: none;
             border-radius: 20px;
             cursor: pointer;
             font-size: 14px;
             display: flex;
             align-items: center;
+            justify-content: center;
             flex-direction: row;
-            
-            }        
+            height: 36px;
+        }  
 
         .install-button {
             gap:3px;
             height: 50%;
             padding: 8px 18px;
             color: #000000;
-            /* background-color: #f3cd25; */
             background-color: white;
-            /* Add a background color for contrast */
             box-shadow: 1px 1px 3px rgba(136, 136, 136, 0.3);
             border-radius: 10px;
             cursor: pointer;
@@ -138,16 +111,26 @@
         }
 
         #app_run {
-            /* width: 100%; */
             width: var(--width-dvw);
             height: var(--height-dvh);
+            position: relative;
+            background-color: #01203a;
+        }
+
+        #app_run.locked {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 100vh;
+            width: 100%;
+            z-index: 1000;
+            overflow: hidden;
         }
 
         .close-button {
             padding: 4px 9px;
             color: #ffffff;
             background-color: white;
-            /* Add a background color for contrast */
             box-shadow: 1px 1px 3px rgba(136, 136, 136, 0.3);
             border-radius: 5px;
             cursor: pointer;
@@ -155,46 +138,29 @@
             opacity: 100%;
         }
 
-        /* For portrait orientation */
         @media screen and (orientation: portrait) {
             .top-bar {
                 width: 100%;
                 justify-content: flex-start;
-                /* Ensure the button is aligned correctly */
             }
-
             .start-button {
-                font-size: 22x;
+                font-size: 14px;
+                padding: 6px 12px;
             }
         }
 
-        /* For landscape orientation */
         @media screen and (orientation: landscape) {
             .top-bar {
                 width: 100%;
                 justify-content: flex-end;
-                /* Ensure the button is aligned correctly */
             }
-
             .start-button {
-                font-size: 22x;
+                font-size: 14px;
+                padding: 6px 12px;
             }
-
         }
         
-        .install-arrow-box {
-            display: inline-block;
-            padding: 5px 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            text-align: center;
-            font-color: #000000;
-            background-color: #ADD8E6;
-
-        }      
-        
         #rotatescreenlanscape {
-            /* width: 100%; */
             width: 100%;
             height: 100%;
             position: absolute;
@@ -206,12 +172,9 @@
             margin: 0 !important;
             z-index: 9999;
             touch-action: none;
-
-
         }
 
         #rotatescreenportrait {
-            /* width: 100%; */
             width: 100%;
             height: 100%;
             position: absolute;
@@ -224,392 +187,634 @@
             z-index: 9999;
             touch-action: none;
         }
-        .content {
+
+        .page-section {
+            height: 100vh;
+            width: 100%;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            color: white;
-            text-align: center;
+            position: relative;
+            padding-top: 2rem;
         }
 
+        h1 {
+            font-family: Impact, 'Arial Narrow Bold', sans-serif;
+            text-align: center;
+            position: relative;
+            color: white;
+        }
+        
+        .page-1 {
+            background: black;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+        }
+
+        .page-1::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .company-logo {
+            max-width: 400px;
+            height: 50px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 10px 30px rgba(255,255,255,0.1));
+        }
+
+        .welcome-text {
+            font-family: 'Arial', sans-serif;
+            font-size: 5.5vw;
+            font-weight: 300;
+            color: #ffffff;
+            text-align: center;
+            margin: 1rem 0;
+            letter-spacing: 2px;
+            opacity: 0.9;
+        }
+
+        .scroll-arrow {
+            width: 100px;
+            height: 100px;
+            margin-top: 0.5rem;
+            opacity: 0.8;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateX(-50%) translateY(0);
+            }
+            40% {
+                transform: translateX(-50%) translateY(-10px);
+            }
+            60% {
+                transform: translateX(-50%) translateY(-5px);
+            }
+        }
+        
     </style>
 </head>
 
 <body>
-    <div id="app_run" >
+    <div class="page-section page-1" style="position: relative; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 120px 20px 20px; box-sizing: border-box;">
+    
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 2vh; width: 100%; max-width: 500px;">
+            
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <div style="background-color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                    <img id="app-icon" src="" alt="App Icon" style="width: 60vw; max-width: 250px; height: auto;">
+                </div>
+            </div>
+            
+            <div style="display: flex; justify-content: center; width: 100%;">
+                <h1 class="welcome-text" id="welcome-text" style="text-align: center; font-weight: bold; margin: 0; line-height: 1.2; padding: 0 20px;"></h1>
+            </div>
+        
+        </div>
+        
+        <div style="position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);">
+            <img src="assets/swipe_up.svg" alt="Scroll Up" class="scroll-arrow" style="width: 25vw; max-width: 100px; height: auto; filter: brightness(0) invert(1);">
+        </div>
+        
+        <div style="position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: center;">
+            <img src="assets/netzyn_logo-11.svg" alt="Netzyn Logo" class="company-logo" style="width: 25vw; max-width: 100px; height: auto;">
+        </div>
+    </div>
+
+    <div id="app_run">
         <img id="rotatescreenlanscape" src="assets/rotate-L.gif" />
         <img id="rotatescreenportrait" src="assets/rotate-P.gif" />
-        <div class="top-bar" id="apprun_topbar">
-            <div style="justify-content: flex-start;" class="sub-bar">
-                <div class="app-icon" style="place-items: center;margin-top: 5px;" id="netzyn_logo="><img src="assets/netzyn_logo-05.svg" width="75" height="30"/></div>
+        <div class="box" id="where_to_put_the_video" tabindex="-1">
+            <div id="loading-screen" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1000;">
+                
+                <div style="margin-bottom: 30px; display: flex; justify-content: center; align-items: center;">
+                    <div style="background-color: white; padding: 20px; border-radius: 15px; display: inline-block;">
+                        <img id="loading-icon" src="" alt="Loading" style="width: 40vw; max-width: 180px; height: auto; display: block;">
+                    </div>
+                </div>
+                    
+                <div style="display: flex; gap: 30px; align-items: center; justify-content: center;">
+                    <div id="count-3" style="display: flex; flex-direction: column; align-items: center; gap: 10px;">
+                        <div style="width: 80px; height: 80px; border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: bold; color: white; font-family: Arial, sans-serif; transition: all 0.3s;">3</div>
+                    </div>
+                    <div id="count-2" style="display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0.3;">
+                        <div style="width: 80px; height: 80px; border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: bold; color: white; font-family: Arial, sans-serif; transition: all 0.3s;">2</div>
+                    </div>
+                    <div id="count-1" style="display: flex; flex-direction: column; align-items: center; gap: 10px; opacity: 0.3;">
+                        <div style="width: 80px; height: 80px; border: 4px solid white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 60px; font-weight: bold; color: white; font-family: Arial, sans-serif; transition: all 0.3s;">1</div>
+                    </div>
+                </div>
+                    
             </div>
-
+        </div>
+        <div class="top-bar" id="apprun_topbar">
             <div class="sub-bar">
                 <div class="start-button-container">
-                    
                     <img src="assets/timer.svg">
-                    <button class="start-button" style="padding-right: 0%;margin-right: 0%;padding-left: 0%;margin-left: 10%;" id="timer">5:00</button>
+                    <button class="start-button" style="margin-left: 10px;" id="timer">5:00</button>
                 </div>            
-                <button style="display: flex; align-items: center; gap: 5px; margin-right: 10px;border: none;" class="install-button" id="install" onclick="handleInstall()">
+                <button style="display: flex; align-items: center; gap: 5px; margin-right: 10px;border: none;" class="install-button" id="install">
                     <img src="assets/install.svg" alt="Install Icon" style="height: 16px; width: 16px;">
                     Install
                 </button>
                 
-                <button style="margin-right: 20px;border: none;" class="close-button" id="close" onclick="handleOnClick()"><img src="assets/XButton.svg"/></button>
-                <p></p>
+                <button style="margin-right: 20px;border: none;" class="close-button" id="close"><img src="assets/XButton.svg"/></button>
             </div>
         </div>
-
-        <div visibility: visible class="box" id="where_to_put_the_video" object-fit="fill" background="black"
-            tabindex="-1"></div>
-
     </div>
-
+    
     <script>
-        let g_WaitForStartTimerId       = 0;                //!< Timeout waiting for user to click the "Enjoy the games" play button
-        let g_WaitForStartTimeout       = 10000;            //!< Timeout duration for play button click 10seconds
-        let g_WaitForAppActiveId        = 0;                //!< Timeout waiting for NzPlayerWebBrowser to callback with NZWEBPLAYER_APPACTIVE
-        let g_WaitForAppActiveTimeout   = 10000;            //!< Timeout duration for NZWEBPLAYER_APPACTIVE from NzPlayerWebBrowser
-        let g_BackOnClose               = true;             //!< Flag to control behaviour, TRUE - history.back() on closing
-        let g_buttonStart               = null;             //!< Start button to play audio/video
-	    let g_didResize                 = false;            //!< Flag to indicate if user rotated device to correct orientation
-        let g_timeLeft                  = 300;              //!< Current app demo time remaining (stored/read from localStorage)
-
-        function detectRotationToPortrait(timeoutId) {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-
-            // Check if it switched to portrait
-            if (width < height) {
-                console.log("Device rotated to Portrait - Showing screen cover");
-		        g_didResize = true;
-                const element = document.getElementById("rotatescreenportrait");
-                element.style.display = "none"; // Hide the cover
-                element.remove(); // Optionally remove the element
-
-                clearTimeout(timeoutId); // Stop the timeout (no redirect)
-                //alert("Device rotated to portrait, launching player...");
-
-                // Initialize video player after rotation is detected
-                initializeV(); // Call your video initialization function (if any)
-
-                console.log("detectRotationToPortrait In orientation: portrait");
-                // Now that the rotation is handled, launch the player
-                launchNzPlayer(app);
-            }
-
-        }
-        function detectRotationToLandscape(timeoutId) {
-            const width = window.innerWidth;
-            const height = window.innerHeight;
-
-            // Check if it switched to portrait
-            if (width > height) {
-                console.log("Device rotated to LandScape - Showing screen cover");
-		        g_didResize = true;
-                const element = document.getElementById("rotatescreenlanscape");
-                element.style.display = "none"; // Hide the cover
-                element.remove(); // Optionally remove the element
-
-                clearTimeout(timeoutId); // Stop the timeout (no redirect)
-                //alert("Device rotated to portrait, launching player...");
-
-                // Initialize video player after rotation is detected
-                initializeV(); // Call your video initialization function (if any)
-
-                console.log("detectRotationToLandscape In orientation: landscape");
-                // Now that the rotation is handled, launch the player
-                launchNzPlayer(app); 
-            }
-
-        }
-        function isIOS() {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        }
+        // ============================================================================
+        // GENERIC SWIPE-TO-PLAY WEB PLAYER
+        // All parameters must be provided via URL 
+        // ============================================================================
         
-        function initializeV()
-        {
-            const screenWidth = window.innerWidth;
-            const screenHeight = window.innerHeight;
+        let g_WaitForStartTimerId       = 0;
+        let g_WaitForStartTimeout       = 10000;
+        let g_WaitForAppActiveId        = 0;
+        let g_WaitForAppActiveTimeout   = 10000;
+        let g_BackOnClose               = true;
+        let g_buttonStart               = null;
+	    let g_didResize                 = false;
+        let g_timeLeft                  = 300;
+        let g_dualPlayer                = false;
+        let nzPlayerStarted             = false;
 
-            const topBar = document.querySelector(".top-bar");
-            const appRun = document.getElementById("app_run");
-            const playArea = document.getElementById("where_to_put_the_video");
-            let bBarTop = false; // TODO check if bar at top or bottom, but the quick method is to hard code it!
-
-            if(topBar == null)
-                return;
-
-            if(bBarTop)
-            {
-                if (window.matchMedia("(orientation: portrait)").matches) {
-                    // Portrait: Adjust height minus toolbar
-                    const topBarHeight = topBar.offsetHeight;
-                    appRun.style.width = screenWidth + "px";
-                    appRun.style.height = (screenHeight - topBarHeight) + "px";
-                    playArea.style.width = screenWidth + "px";
-                    playArea.style.height = (screenHeight - topBarHeight) + "px";
-                    appRun.style.marginTop = `${topBarHeight}px`; // Fixed syntax
-                } else {
-                    // Landscape: Adjust width minus toolbar
-                    const topBarWidth = topBar.offsetWidth;
-                    appRun.style.width = `${screenWidth - topBarWidth}px`;
-                    appRun.style.height = `${screenHeight}px`;
-                    playArea.style.width = `${screenWidth - topBarWidth}px`;
-                    playArea.style.height = `${screenHeight}px`;
-                    appRun.style.marginLeft = `${topBarWidth}px`; // Fixed syntax
-                }
-            }
-            else
-            {
-                    const topBarHeight = topBar.offsetHeight;
-                    appRun.style.width = screenWidth + "px";
-                    appRun.style.height = (screenHeight - topBarHeight) + "px";
-                    playArea.style.width = screenWidth + "px";
-                    playArea.style.height = (screenHeight - topBarHeight) + "px";
-                    appRun.style.marginBottom = `${topBarHeight}px`; // Fixed syntax
-            }
-        }
-
-        window.addEventListener("load", () => {
-            initializeV();
-            window.addEventListener('resize',function(){
-                //when the browser window is resized; recalculate
-                initializeV();
-            });            
-
-        });
-
+        // Read ALL parameters from URL
         let app             = new URLSearchParams(window.location.search).get("app");
+        let appIcon         = new URLSearchParams(window.location.search).get("icon");
+        let bgColor         = new URLSearchParams(window.location.search).get("color");
+        let appName         = new URLSearchParams(window.location.search).get("text");
         let orientation     = new URLSearchParams(window.location.search).get("orient");
         let install         = new URLSearchParams(window.location.search).get("install");
         let install_ios     = new URLSearchParams(window.location.search).get("install_ios");
         let backOnClose     = new URLSearchParams(window.location.search).get("back");
-        let no_install      = (install == null || install =="");
-        let no_install_ios  = (install_ios == null || install_ios =="");
+        let g_username      = new URLSearchParams(window.location.search).get("user");
+        g_dualPlayer        = (new URLSearchParams(window.location.search).get("dualplayer") === "true");
 
-        if(backOnClose == null )
-            g_BackOnClose = false;
-        else if(backOnClose=="true")
-            g_BackOnClose = true;
-        else
-            g_BackOnClose = false;
-
-        if(app == null || app == "")
-        {
-            const alertMsg = "App url param is missing";
+        // Validate required parameters
+        if (!app || app === "") {
+            console.error("Error: 'app' parameter is required");
+        }
+        if (!appIcon || appIcon === "") {
+            console.warn("WARNING: 'icon' parameter not provided - icon will be hidden");
+            appIcon = ""; // empty string - hide icon dont show the broken image.
+        }
+        if (!appName || appName === "") {
+            console.warn("WARNING: 'text' parameter not provided - using generic text");
+            appName = "this app"; //Generic text
+        }
+        if (!bgColor || bgColor === "") {
+            console.warn("WARNING: 'color' parameter not provided, using default black");
+            bgColor = "#000000";
         }
 
-        if(orientation == null || orientation == "")
-            orientation = "L";
-
-        // Handle missing install links
-        if (no_install && no_install_ios) {
-            console.log("App install url missing");
-        } else if (no_install && !no_install_ios) {
-            if (isIOS()) {
-                install = install_ios;
+        // Set defaults for optional parameters
+        if (!orientation || orientation === "") {
+            if (app && app.endsWith("_l")){
+                orientation = "L";
             } else {
-                console.log("Android install URL missing and device is not iOS");
+                orientation = "P";
             }
-        } else if (!no_install && no_install_ios) {
-            // Use Android link (already in `install`)
-            // Nothing needs to change
+
+        }
+        orientation = orientation.toUpperCase();
+
+        if (backOnClose === "true") {
+            g_BackOnClose = true;
         } else {
-            // Both links present
+            g_BackOnClose = false;
+        }
+
+        // Handle install URLs with device detection
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+
+        // Device-specific install URL selection
+        if (install_ios && isIOS()) {
+            install = install_ios;
+        }
+
+        if (!install || install === "") {
+            console.warn("WARNING: No install URL provided, using generic store");
             if (isIOS()) {
-                install = install_ios;
+                install = "https://apps.apple.com";
+            } else {
+                install = "https://play.google.com";
             }
         }
 
-        if(localStorage != null && app != null)
-            g_timeLeft = localStorage.getItem(app);
+        // ============================================================================
+        // AUTO TEXT COLOR BASED ON BACKGROUND BRIGHTNESS
+        // ============================================================================
+        function getTextColorForBackground(bgColor) {
+            // Default to white if no color provided
+            if (!bgColor || bgColor === "") {
+                return "#ffffff";
+            }
+            
+            // Remove # if present
+            const hex = bgColor.replace('#', '');
+            
+            // Convert hex to RGB
+            const r = parseInt(hex.substr(0, 2), 16);
+            const g = parseInt(hex.substr(2, 2), 16);
+            const b = parseInt(hex.substr(4, 2), 16);
+            
+            // Calculate perceived brightness (0-255)
+            // Formula: https://www.w3.org/TR/AERT/#color-contrast
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+            
+            // If bright background (>128), use dark text. Otherwise use light text.
+            return brightness > 128 ? "#000000" : "#ffffff";
+        }
 
-        //*************************************************************************
-        // for this example, ignore the save time and always start at 300seconds time remaining
-        g_timeLeft = 300
-        //*************************************************************************
+        // ============================================================================
+        // INITIALIZE UI WITH URL PARAMETERS
+        // ============================================================================
+        window.addEventListener("load", () => {
+            // Calculate text color based on background brightness
+            const textColor = getTextColorForBackground(bgColor);
+            
+            // Set background colors
+            if (bgColor) {
+                document.body.style.backgroundColor = bgColor;
+                const pageSection = document.querySelector('.page-section'); 
+                if (pageSection) {
+                    pageSection.style.backgroundColor = bgColor;
+                }
+            }
+            
+            // Set welcome text with auto text color
+            const welcomeText = document.getElementById('welcome-text'); 
+            if (appName && welcomeText) {
+                welcomeText.innerHTML = `Swipe up to try ${appName}`;
+                welcomeText.style.color = textColor;
+            }
+            
+            // Set swipe arrow color
+            const scrollArrow = document.querySelector('.scroll-arrow');
+            if (scrollArrow) {
+                // If dark background (white text), use white arrow. If light background (black text), use black arrow
+                if (textColor === "#ffffff") {
+                    scrollArrow.style.filter = "brightness(0) invert(1)"; // White arrow
+                } else {
+                    scrollArrow.style.filter = "brightness(0)"; // Black arrow
+                }
+            }
 
+            // Set app icon Or hide if not provided
+            const appIconElement = document.getElementById('app-icon');
+            if (appIcon && appIcon !== "" && appIconElement) {
+                appIconElement.src = appIcon;
+                appIconElement.style.display = 'block';
+            } else if (appIconElement) {
+                // HIde icon and white container if no icon URL provided 
+                appIconElement.style.display = 'none';
+                const iconContainer = appIconElement.parentElement;
+                if (iconContainer) {
+                    iconContainer.style.display = 'none';
+                }
+            }
+        });
+
+        // ============================================================================
+        // SCROLL DETECTION & PLAYER LAUNCH
+        // ============================================================================
+        scrollToTop = ()=>{ window.scrollTo(0,0); document.body.removeEventListener('touchstart', scrollToTop) }
+        document.body.addEventListener('touchstart', scrollToTop)
+
+        document.addEventListener('scroll', (event) => {
+            const playArea = document.getElementById('app_run');
+            const topBar = document.querySelector('.top-bar')
+            const rect = playArea.getBoundingClientRect();
+            
+            if (rect.top >= 0 && 
+                (rect.bottom*0.70) <= (window.innerHeight || document.documentElement.clientHeight) && 
+                rect.right <= (window.innerWidth || document.documentElement.clientWidth)) {
+                    playArea.classList.add('locked');
+                    topBar.style.position = 'fixed';
+                    document.body.style.overflow = 'hidden';
+                    document.body.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+
+                    if(!nzPlayerStarted) {
+                        initializeV(); 
+                        startNzPlayer();
+                        nzPlayerStarted = true;
+                        
+                        // Initialize countdown screen
+                        const loadingScreen = document.getElementById('loading-screen');
+                        const loadingIcon = document.getElementById('loading-icon');
+                        
+                        if (bgColor && loadingScreen) {
+                            loadingScreen.style.backgroundColor = bgColor;
+                            
+                            // Set countdown numbers color based on background
+                            const textColor = getTextColorForBackground(bgColor);
+                            const countElements = ['count-3', 'count-2', 'count-1'];
+                            countElements.forEach(id => {
+                                const element = document.getElementById(id);
+                                if (element) {
+                                    const numberDiv = element.querySelector('div');
+                                    if (numberDiv) {
+                                        numberDiv.style.color = textColor;
+                                        numberDiv.style.borderColor = textColor;
+                                    }
+                                }
+                            });
+                        }
+                        
+                        if (appIcon && appIcon !== "" && loadingIcon) {
+                            loadingIcon.src = appIcon;
+                            loadingIcon.style.display = 'block';
+                        } else if (loadingIcon) {
+                            // Hide icon and white container if no icon provided
+                            loadingIcon.style.display = 'none';
+                            const iconContainer = loadingIcon.parentElement;
+                            if (iconContainer) {
+                                iconContainer.style.display = 'none';
+                            }
+                        }
+
+                        // Start 3-2-1 countdown
+                        let count = 3;
+                        const countdownInterval = setInterval(() => {
+                            const currentElement = document.getElementById(`count-${count}`);
+                            if (currentElement) {
+                                currentElement.style.opacity = '1';
+                                currentElement.querySelector('div').style.backgroundColor = '#808080';
+                                currentElement.querySelector('div').style.borderColor = '#808080';
+                            }
+                            
+                            count--;
+                            
+                            if (count >= 1) {
+                                const nextElement = document.getElementById(`count-${count}`);
+                                if (nextElement) {
+                                    nextElement.style.opacity = '1';
+                                    nextElement.querySelector('div').style.transform = 'scale(1.1)';
+                                }
+                            } else {
+                                clearInterval(countdownInterval);
+                                if (loadingScreen) {
+                                    loadingScreen.style.display = 'none';
+                                }
+                            }
+                        }, 1000);
+                    }
+            }
+        });
+
+        // ============================================================================
+        // ROTATION DETECTION
+        // ============================================================================
+        function detectRotationToPortrait(timeoutId) {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            if (width < height) {
+		        g_didResize = true;
+                const element = document.getElementById("rotatescreenportrait");
+                element.style.display = "none";
+                element.remove();
+                clearTimeout(timeoutId);
+                initializeV();
+                launchNzPlayer(app);
+            }
+        }
+
+        function detectRotationToLandscape(timeoutId) {
+            const width = window.innerWidth;
+            const height = window.innerHeight;
+
+            if (width > height) {
+		        g_didResize = true;
+                const element = document.getElementById("rotatescreenlanscape");
+                element.style.display = "none";
+                element.remove();
+                clearTimeout(timeoutId);
+                initializeV();
+                launchNzPlayer(app); 
+            }
+        }
+
+        // ============================================================================
+        // VIEWPORT INITIALIZATION
+        // ============================================================================
+        function initializeV() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            const topBar = document.querySelector(".top-bar");
+            const appRun = document.getElementById("app_run");
+            const playArea = document.getElementById("where_to_put_the_video");
+
+            if (topBar == null) return;
+
+            const topBarHeight = topBar.offsetHeight;
+            appRun.style.width = screenWidth + "px";
+            appRun.style.height = (screenHeight - topBarHeight) + "px";
+            playArea.style.width = screenWidth + "px";
+            playArea.style.height = (screenHeight - topBarHeight) + "px";
+            appRun.style.marginBottom = `${topBarHeight}px`;
+        }
+
+        window.addEventListener("load", () => {
+            initializeV();
+            window.addEventListener('resize', initializeV);            
+        });
+
+        // ============================================================================
+        // VISIBILITY & LIFECYCLE EVENTS
+        // ============================================================================
+        document.addEventListener("visibilitychange", () => {
+            if (document.visibilityState === "hidden") {
+                NzPlayerWebBrowserPauseMedia();
+                updateServer({event: "page_hidden"});
+            } else if (document.visibilityState === "visible") {
+                NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_AUDIO);
+                NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_VIDEO);
+            }
+        });
+
+        // Also listen for 'pagehide' for cases where 'visibilitychange' might not fire (like tab/app close)
+        window.addEventListener('pagehide', function (event) {
+            if (event.persisted) {
+                // The page is being cached (BFCache), no need for cleanup
+                updateServer({event: "page_hidden"});
+            } else {
+                // The page is being unloaded (safari app/tab close), perform final cleanup/send beacons
+                console.log('Page is being unloaded');
+                updateServer({event: "page_hidden"});
+            }
+        });
+
+        document.addEventListener("unload", () => {
+            updateServer({event: "page_hidden"});
+        });
+
+        document.addEventListener("beforeunload", () => {
+            updateServer({event: "page_hidden"});
+        });
+
+        // ============================================================================
+        // TIMER FUNCTIONALITY
+        // ============================================================================
         const timerDisplay = document.getElementById("timer");
 
         function updateTimer() {
             const minutes = Math.floor(g_timeLeft / 60);
             const seconds = g_timeLeft % 60;
-            timerDisplay.src = "./assets/timer.svg";
             timerDisplay.innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
             g_timeLeft--;
 
-            //*************************************************************************
-            // for this example, disable saving the time remaining
-            // if (localStorage != null)
-            //     localStorage.setItem(app, g_timeLeft <= 0 ? 0 : g_timeLeft);
-            //*************************************************************************
-
             if (g_timeLeft <= 0) { 
                 const installButton = document.getElementById("install");
-                console.log("pre_applaunch:Fshutdown_webnavigateToPage3:setinterval installbutton=", installButton);
-
                 NzPlayerWebBrowserPauseMedia();
-                const alertMsg = "Demo time has been exhausted";
-                alert(alertMsg);
 
-                if(installButton != null)
+                if (installButton != null) {
                     installButton.click();
-                else
-                {
+                } else {
                     window.close();
                     goBack();
                 }
-            }
-            else
+            } else {
                 setTimeout(updateTimer, 1000);
-
+            }
         }
 
+        // ============================================================================
+        // BUTTON HANDLERS
+        // ============================================================================
         const closeButton = document.getElementById("close");
-        if(closeButton != null)
-        {
+        if (closeButton != null) {
             closeButton.onclick = () => {
-                console.log("apprun_close onclick");
-                window.close();
-                goBack();
+                updateServer({event: "page_hidden"});
+                setTimeout(() => {
+                    window.close();
+                    goBack();
+                }, 500);
             };
         }
         
         const installButton = document.getElementById("install");
-        if(installButton != null)
-        {
-            if(install == null || install == "")
-            {
-                if(isIOS())
-                    install = "https://apps.apple.com";
-                else
-                    install = "https://play.google.com";
-            }
-
-            //installButton.onclick = () => window.location.href = `${install}`;
+        if (installButton != null) {
             installButton.onclick = () => {
-                window.open(install, "_blank");
-                window.close();
-                goBack();
+                updateServer({event: "page_hidden"});
+                setTimeout(() => {
+                    window.open(install, "_blank");
+                    window.close();
+                    goBack();
+                }, 500);
             };
         }
-        
 
-        function showStartButton()
-        {
-            // This method is called on receiving APPACTIVE callback, so stop the timer waiting for it
+        // ============================================================================
+        // SHOW UNMUTE/START BUTTON (Browser autoplay protection)
+        // ============================================================================
+        function showStartButton() {
             clearTimeout(g_WaitForAppActiveId);
             g_WaitForAppActiveId = 0;
 
-            const elementForVideo="where_to_put_the_video";
+            const elementForVideo = "where_to_put_the_video";
 
-            if(g_buttonStart == null)
-            {
-                // start timeout to wait for start button to be clicked
-                g_WaitForStartTimerId = setTimeout(timeoutWaitForStart, g_WaitForStartTimeout);
-
-                let bBarTop = false; // TODO check if bar at top or bottom, but the quick method is to hard code it!
-
-                console.log("Create PLAY button for browsers's autoplay protection");
-
-                let elementDiv  = document.getElementById(elementForVideo);
-                // const topBar    = document.querySelector(".top-bar");
-                // const appRun    = document.getElementById("app_run");
-                // const playArea  = document.getElementById("where_to_put_the_video");
-                var left        = 0;
-                var top         = 0;
-                var fontsize    = 50;
-                var alpha       = 0.75;
-
-                const divComputedStyle = window.getComputedStyle(elementDiv);
+            if (g_buttonStart == null) {
+                let elementDiv = document.getElementById(elementForVideo);
+                var fontsize = 30;
+                var alpha = 0.75;
 
                 g_buttonStart = document.createElement('button');
-    //                button.textContent = '\u25BA'; // glyph black right-pointing pointer
-                g_buttonStart.textContent          = 'Enjoy the game! \u25B7'; // glyph white right-pointing triangle
-                g_buttonStart.style.fontSize       = fontsize + "px"
-                g_buttonStart.style.position       = "absolute"
-                g_buttonStart.style.width          = elementDiv.style.width  ? elementDiv.style.width  : divComputedStyle.width; //"200px"
-                g_buttonStart.style.height         = elementDiv.style.height ? elementDiv.style.height : divComputedStyle.height; //"200px"
-                g_buttonStart.style.top            = top + "px";
-                g_buttonStart.style.left           = left + "px";
-                g_buttonStart.style.border         = "none";
-                g_buttonStart.style.color          = "rgb(255, 255, 255)";
-                g_buttonStart.style.backgroundColor= `rgba(0, 0, 0, ${alpha})`;
+                g_buttonStart.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#e3e3e3"><path d="M792-56 671-177q-25 16-53 27.5T560-131v-82q14-5 27.5-10t25.5-12L480-368v208L280-360H120v-240h128L56-792l56-56 736 736-56 56Zm-8-232-58-58q17-31 25.5-65t8.5-70q0-94-55-168T560-749v-82q124 28 202 125.5T840-481q0 53-14.5 102T784-288ZM650-422l-90-90v-130q47 22 73.5 66t26.5 96q0 15-2.5 29.5T650-422ZM480-592 376-696l104-104v208Zm-80 238v-94l-72-72H200v80h114l86 86Zm-36-130Z"/></svg>`;
+                g_buttonStart.style.position = "absolute";
+                g_buttonStart.style.top = "85%";
+                g_buttonStart.style.left = "85%";
+                g_buttonStart.style.transform = "translate(-50%, -50%)";
+                g_buttonStart.style.padding = "7px 7px";
+                g_buttonStart.style.fontSize = fontsize + "px";
+                g_buttonStart.style.fontFamily = "Arial, sans-serif";
+                g_buttonStart.style.color = "#ffffff";
+                g_buttonStart.style.backgroundColor = `rgba(0, 0, 0, ${alpha})`;
+                g_buttonStart.style.border = "2px solid white";
+                g_buttonStart.style.borderRadius = "15px";
+                g_buttonStart.style.boxShadow = "0 4px 20px rgba(0,0,0,0.5)";
+                g_buttonStart.style.cursor = "pointer";
+                g_buttonStart.style.zIndex = "10000";
+                g_buttonStart.style.display = "flex";
                     
-                console.log("divComputedStyle.width  = ", divComputedStyle.width);
-                console.log("divComputedStyle.height = ", divComputedStyle.height);
-                //console.log("divComputedStyle = ", divComputedStyle);
-                console.log(`divwidth=${elementDiv.style.width}, height=${elementDiv.style.height} top=${elementDiv.style.top}, left=${elementDiv.style.left}`)
-                
-                // Add the button to the container
                 elementDiv.appendChild(g_buttonStart);
 
                 g_buttonStart.onclick = () => {
                     clearTimeout(g_WaitForStartTimerId);
                     g_WaitForStartTimerId = 0;
+                    
+                    const loadingScreen = document.getElementById('loading-screen');
+                    if (loadingScreen) {
+                        loadingScreen.style.display = 'none';
+                    }
 
                     NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_AUDIO);
                     NzPlayerWebBrowserPlayMedia(NZWEBPLAYER_MEDIA_VIDEO);
-                
-                    updateTimer(); // start timer counting down
-
                     g_buttonStart.remove();
                 }
+                updateTimer();
             }
-
         }
 
-
-        //------------------------------------------------------------------------------
-        // callbackWebPlayerStatus
-        //! WebPlayer callback with status
-        //!
-        //! @param [in] statusId    Event status ID
-        //------------------------------------------------------------------------------
-        function callbackWebPlayerStatus(statusId, data)
-        {
-            console.log("callbackWebPlayerStatus statusId=", NzPlayerWebBrowserCallbackToString(statusId), " (", statusId, ")");
+        // ============================================================================
+        // WEBPLAYER CALLBACKS
+        // ============================================================================
+        function callbackWebPlayerStatus(statusId, data) {
             let bClose = false;
 
-            switch(statusId)
-            {
+            switch(statusId) {
                 case NZWEBPLAYER_EXIT_UNSUPPORTED_BROWSER:
                     alert("Sorry, this browser is not supported.");
                     bClose = true;
                     break;
 
                 case NZWEBPLAYER_EXIT_ERROR_INVALID_AUTHID:
-                    alert("ERROR Invalid auth_id. Check auth_id passed to NzPlayerWebBrowser()!");
+                    alert("ERROR Invalid auth_id.");
                     bClose = true;
                     break;
 
                 case NZWEBPLAYER_EXIT_ERROR_INVALID_DIV:
-                    alert("ERROR Invalid HTML div. Check div passed to NzPlayerWebBrowser()!");
+                    alert("ERROR Invalid HTML div.");
                     bClose = true;
                     break;
 
                 case NZWEBPLAYER_EXIT_ERROR_NO_APP:
-                    alert("ERROR Invalid app name. Check app name passed to NzPlayerWebBrowser()!");
+                    alert("ERROR Invalid app name.");
                     bClose = true;
                     break;
 
                 case NZWEBPLAYER_EXIT_ERROR_VERSION_MISMATCH:
-                    alert("ERROR this version of NzPlayerWebBrowser.js is not supported by server!");
+                    alert("ERROR version mismatch.");
                     bClose = true;
                     break;
 
                 case NZWEBPLAYER_EXIT_ERROR_LAUNCH:
-                    alert("ERROR launching app!");
+                    alert("ERROR launching app.");
                     bClose = true;
                     break;
 
                 case NZWEBPLAYER_EXIT_ERROR_POOR_NETWORK:
-                    alert("ERROR current network is unsuitable to reliably run app");
+                    alert("ERROR network unsuitable.");
                     bClose = true;
                     break;
 
                 case NZWEBPLAYER_EXIT_SERVER_NOT_AVAILABLE:
-                    alert("ERROR no server is available");
+                    alert("ERROR no server available.");
                     bClose = true;
                     break;
 
@@ -621,189 +826,121 @@
                 case NZWEBPLAYER_RECVDATA:
                     handleRecvData(data);
                     return;
-                    break;
 
                 case NZWEBPLAYER_APPACTIVE:
-                    console.log("callbackPlayerStatus first video frame");
+                    if (data != null) {
+                        updateServer(data);
+                    }
                     showStartButton();
                     break;
 
-                // for this example we want to print/show something for all callbacks!
                 case NZWEBPLAYER_VERSION:
-                    console.log("callbackPlayerStatus Version : " + data);
+                    console.log("WebPlayer Version: " + data);
                     break;
 
                 default:
-                    alert("Unparsed callback id=" + statusId);
+                    console.log("Unparsed callback id=" + statusId);
                     break;
             }
 
-            console.log("callbackWebPlayerStatus statusId=", NzPlayerWebBrowserCallbackToString(statusId), " (", statusId, "), bClose=", bClose);
-            if(bClose == true)
-            {
-                console.log("callbackWebPlayerStatus close player because of callback : ", NzPlayerWebBrowserCallbackToString(statusId));
+            if (bClose == true) {
                 window.close();
                 goBack();
             }
-
         }
 
+        // ============================================================================
+        // DUAL PLAYER SYNC (Optional)
+        // ============================================================================
+        function updateServer(data) {
+            if (!g_dualPlayer) {
+                console.log("Not a dual stream. Skipping updates to rest server.");
+                return;
+            }
 
-    //************************ For SEND/RECVDATA
-        //------------------------------------------------------------------------------
-        // base64ToIntArray
-        //! Convert from base64 to an array of integers
-        //!
-        //! @param [in] base64String        String of base64 values to convert
-        //!
-        //! @return base64String as uint8_t array
-        //------------------------------------------------------------------------------
-        function base64ToIntArray(base64String) 
-        {
+            data["username"] = g_username;
+
+            fetch('https://nzos.nz-naas.com:5000/create-session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Server sync success:', data);
+            })
+            .catch((error) => {
+                console.error('Server sync error:', error);
+            });
+        }
+
+        // ============================================================================
+        // DATA RECEIVE/SEND (Optional)
+        // ============================================================================
+        function base64ToIntArray(base64String) {
             const binaryString = atob(base64String);
             const byteArray = new Uint8Array(binaryString.length);
             for (let i = 0; i < binaryString.length; i++) 
                 byteArray[i] = binaryString.charCodeAt(i);
-            
-            const intArray = Array.from(byteArray);
-
-            return intArray;
+            return Array.from(byteArray);
         }
 
-        //------------------------------------------------------------------------------
-        // stringToByteArrayOfChars
-        //! Convert a string to an array of uint8_t 
-        //!
-        //! @param [in] str             String to convert to array of uin8_t
-        //!
-        //! @return str as uint8_t array
-        //------------------------------------------------------------------------------
-        function stringToByteArrayOfChars(str)
-        {
+        function stringToByteArrayOfChars(str) {
             const byteArray = new Uint8Array(str.length);
             for (let i = 0; i < str.length; i++)
                 byteArray[i] += str.charCodeAt(i);
-
             return byteArray;
         }
 
-        //------------------------------------------------------------------------------
-        // intArrayOfCharsToString
-        //! Convert an array of ints to a string
-        //!
-        //! @param [in] intArray             Array of ints to conevert to a String
-        //!
-        //! @return intArray as string
-        //------------------------------------------------------------------------------
-        function intArrayOfCharsToString(intArray)
-        {
-            var str;
-            str="";
+        function intArrayOfCharsToString(intArray) {
+            var str = "";
             for (let i = 0; i < intArray.length; i++)
                 str += String.fromCharCode(intArray[i]);
-
             return str;
         }
 
-        //------------------------------------------------------------------------------
-        // uint8ArrayToBase64
-        //! Convert an array of uint8 to base64
-        //! NOTE array.toBase64() was an unknown function on Chrome Ubuntu 22!!! hence this function!
-        //!
-        //! @param [in] u8Array             Array of uint8 to conevert to base64
-        //!
-        //! @return u8Array as base64 string
-        //------------------------------------------------------------------------------
-        function uint8ArrayToBase64(u8Array) 
-        {
+        function uint8ArrayToBase64(u8Array) {
             var decoder = new TextDecoder('utf8');
             var b64encoded = btoa(decoder.decode(u8Array));
-
             return b64encoded;
         }
 
-        //------------------------------------------------------------------------------
-        // handleRecvData
-        //! Handle app data from cloud app
-        //!
-        //! @param [in] data        JSON data {string: oidapp, string: oid1, int:param, base64:data}
-        //------------------------------------------------------------------------------
-        function handleRecvData(data)
-        {
-            console.log("handleRecvData = ", data );
+        function handleRecvData(data) {
             var oidApp = data.oidapp;
             var oid1 = data.oid1;
             var param = data.param;
-            var data = base64ToIntArray(data.data);
+            var recvData = base64ToIntArray(data.data);
 
-            console.log("oidApp = ", oidApp);
-            console.log("oid1   = ", oid1);
-            console.log("param  = ", param);
-            console.log("data   = ", data);
-
-            // make sure this is the code for a debug string to test the recv data path
-            if(param !=0xffffffff)
-            {
-                alert("Got RecvData");
-
+            if (param != 0xffffffff) {
                 return;
             }
 
-            var dataAsString = intArrayOfCharsToString(data);
-            console.log("dataAsString  = ", dataAsString);
-            alert("Got RecvData :\n" + dataAsString);
-
+            var dataAsString = intArrayOfCharsToString(recvData);
             var retData = stringToByteArrayOfChars("Hello, " + dataAsString);
-
-            console.log("retData =",retData);
-
-            // tobase64 does not exist with CHrome on ubuntu 22
-            //NzPlayerWebBrowserSendData(oidApp, oid1, param, retData.toBase64() );
-            NzPlayerWebBrowserSendData(oidApp, oid1, param, uint8ArrayToBase64(retData) );
+            NzPlayerWebBrowserSendData(oidApp, oid1, param, uint8ArrayToBase64(retData));
         }
-    //************************ END For SEND/RECVDATA
 
-
-    //************************ For Save/Read/Generate username
-        //------------------------------------------------------------------------------
-        // randomUserName
-        //! Return a string of given length with random letters
-        //! EX:
-        //!     length=5; return "ABCDE"
-        //!     length=5; return "ZWXYZ"
-        //!
-        //! @param [in] length      - Length of string to return
-        //!
-        //! @return string of specified length
-        //------------------------------------------------------------------------------
+        // ============================================================================
+        // USERNAME MANAGEMENT
+        // ============================================================================
         function randomUserName(length) {
             let result = '';
             const characters = 'ab01cdefghijklmnopqrst23uvwxy4z5ABCDEFG67HIJKLMNOPQR89STUVWXYZ'; 
             const charactersLength = characters.length;
 
             let counter = 0;
-            while (counter < length)
-            {
+            while (counter < length) {
                 result += characters.charAt(Math.floor(Math.random() * charactersLength));
                 counter += 1;
             }
-
             return result;
         }
 
-        //------------------------------------------------------------------------------
-        // setCookie
-        //! Helper to set a cookie
-        //!
-        //! @param [in] name        keyname
-        //! @param [in] value       data to store
-        //! @param [in] days        When cookie will expire
-        //------------------------------------------------------------------------------
-        function setCookie(name, value, days) 
-        {
+        function setCookie(name, value, days) {
             let expires = "";
-            if (days) 
-            {
+            if (days) {
                 const date = new Date();
                 date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
                 expires = "; expires=" + date.toUTCString();
@@ -811,103 +948,46 @@
             document.cookie = name + "=" + encodeURIComponent(value) + expires + "; path=/";
         }
 
-        //------------------------------------------------------------------------------
-        // getCookie
-        //! Helper to get a cookie
-        //!
-        //! @param [in] name        keyname
-        //!
-        //! @returns value of cookie
-        //! @returns null if cookie not found
-        //------------------------------------------------------------------------------
-        function getCookie(name) 
-        {
+        function getCookie(name) {
             const cookies = document.cookie.split('; ');
-            for (let i = 0; i < cookies.length; i++) 
-            {
+            for (let i = 0; i < cookies.length; i++) {
                 const parts = cookies[i].split('=');
-                if (parts[0] === name) 
-                {
+                if (parts[0] === name) {
                     return parts[1];
                 }
             }
             return null;
         }
 
-        //------------------------------------------------------------------------------
-        // getUserName
-        //! Get username
-        //!     If username cookie not found, create a random username and save it as a cookie.
-        //!
-        //! @returns username string
-        //------------------------------------------------------------------------------
-        function getUserName() 
-        {
+        function getUserName() {
             let username = getCookie("Username");
-            if(username == null || username == "")
-            {
+            if (username == null || username == "") {
                 username = randomUserName(15);
-
-                let days=365;
-                console.log("New Username =", username);
+                let days = 365;
                 setCookie("Username", username, days);
             }
             return username;
         }
-    //************************ END Save/Read/Generate username
 
-
-        //------------------------------------------------------------------------------
-        // startNzPlayer
-        //! Start the process to launch the webplayer
-        //!     Check for correct orientation, if orientation is not correct allow a few
-        //!     seconds for the suer to rotate to the correct orientation.
-        //!
-        //------------------------------------------------------------------------------
+        // ============================================================================
+        // PLAYER LAUNCH
+        // ============================================================================
         function startNzPlayer() {
-            let app = new URLSearchParams(window.location.search).get("app");
-            let orientation = new URLSearchParams(window.location.search).get("orient");
-            let bCheckOrientation = true; // set to false to make debugging on desktop easier
-            console.log("this is the given orientation" + orientation)
-
-            if(app == null || app == "")
-            {
-                const alertMsg = "App url param is missing";
-                return;
-            }
-
-            if (orientation == null || orientation == "")
-            {
-                if( app.includes("_l"))
-                    orientation = "L";
-                else
-                    orientation = "P";
-            }
-        
-            orientation = orientation.toUpperCase()
-            // move to started callback
-            //updateTimer();
+            let bCheckOrientation = true;
 
             const width = window.innerWidth;
             const height = window.innerHeight;
             var bLaunch = true;
 
-            if(bCheckOrientation == true)
-            {
+            if (bCheckOrientation == true) {
                 if (orientation == 'L' && height > width) {
-                    console.log("navigateToPage3 landscape");
                     const element = document.getElementById("rotatescreenlanscape");
-                    const content = document.getElementById("content");
-
                     element.style.display = "block";
                     window.addEventListener("resize", detectRotationToLandscape);
 
                     setTimeout(() => {
                         element.style.display = "none";
-                        //g_timeLeft += 4;
-                        if(localStorage != null)
-                            localStorage.setItem(app, g_timeLeft);
-                        if(!g_didResize){
+                        if (!g_didResize) {
                             window.close();
                             goBack();
                         }
@@ -917,182 +997,47 @@
                 }
 
                 if (orientation == 'P' && height < width) {
-                    console.log("navigateToPage3 portrait");
-
                     const element = document.getElementById("rotatescreenportrait");
-                    const content = document.getElementById("content");
-
                     element.style.display = "block";
                     window.addEventListener("resize", detectRotationToPortrait);
 
-                    // The timeout ensures the rotation handling is only after a certain period.
                     setTimeout(() => {
                         element.style.display = "none";
-                        //g_timeLeft += 4;
-                        if(localStorage != null)
-                            localStorage.setItem(app, g_timeLeft);
-                        if(!g_didResize){
+                        if (!g_didResize) {
                             window.close();
                             goBack();
                         }
-
                     }, 5000);
                     
                     bLaunch = false;
                 }
             }
 
-            // Only launch if no rotation needed or after rotation is done
             if (bLaunch) {
-                console.log("startNzPlayer In orientation: " + orientation =='P' ? "Portrait" : "Landscape");
-
                 launchNzPlayer(app);
             }
         }
 
-        //------------------------------------------------------------------------------
-        // goBack
-        //! Either goto to previous page in history, or show a please close page [ mainly for embedded browsers ]
-        //! 
-        //------------------------------------------------------------------------------
-        function goBack()
-        {
-            if(g_BackOnClose == true)
-            {
-                if(isIOS())
+        function goBack() {
+            if (g_BackOnClose == true) {
+                if (isIOS()) {
                     history.go(-(window.history.length - 1));        
-                else
+                } else {
                     window.history.back();
-            }
-            else
-                window.location.replace("./pleaseclose.html");
-
-            // if(isIOS())
-            // {
-            //     if(window.history.length > 1)
-            //     {
-            //         history.go(-(window.history.length - 1));        
-            //     }
-            //     else
-            //         window.location.replace("./pleaseclose.html");
-            // }
-            // else
-            // {
-            //     window.history.back();
-            // }
-        }
-        
-        //------------------------------------------------------------------------------
-        // timeoutWaitForStart
-        //! Called when start button has not been clicked in a timely fashion
-        //! 
-        //------------------------------------------------------------------------------
-        function timeoutWaitForStart()
-        {
-            console.log("timeoutWaitForStart, show thanks");
-
-            if(isIOS())
-            {
-                if(window.history.length > 1)
-                {
-                    history.go(-(window.history.length - 1));        
                 }
-                else
-                    window.location.replace("./playtimeout.html");
-            }
-            else
-            {
-                window.location.replace("./playtimeout.html");
+            } else {
+                window.location.replace("./pleaseclose.html");
             }
         }
 
-        //------------------------------------------------------------------------------
-        // timeoutAppActive
-        //! Called when appactive callback has not been received in a timely manner...
-        //! 
-        //------------------------------------------------------------------------------
-        function timeoutAppActive()
-        {
-            console.log("waitForAppActive, show thanks and timeout");
-
-            const elementForVideo="where_to_put_the_video";
-
-            let apprunDiv  = document.getElementById("app_run");
-            if(apprunDiv == null)
-                return;
-
-            let elementDiv  = document.getElementById(elementForVideo);
-            if(elementDiv == null)
-                return;
-            
-            elementDiv.remove();
-
-            const divComputedStyle = window.getComputedStyle(apprunDiv);
-
-            var left        = 0; //Math.floor( parseInt(divComputedStyle.width,10) * 0.4 )+ "px";
-            var top         = 0; //Math.floor( parseInt(divComputedStyle.height,10) * 0.4) + "px";;
-            var fontsize    = 50;
-            var alpha       = 0.75;
-
-            console.log("left  = ", left);
-            console.log("top   = ", top);
-
-            console.log("divComputedStyle.width  = ", divComputedStyle.width);
-            console.log("divComputedStyle.height = ", divComputedStyle.height);
-            console.log(`divwidth=${elementDiv.style.width}, height=${elementDiv.style.height} top=${elementDiv.style.top}, left=${elementDiv.style.left}`)
-
-
-            let timeoutText = document.createElement('paragraph');
-            timeoutText.textContent          = 'Timeout waiting for appactive callback';
-            timeoutText.style.fontSize       = fontsize + "px"
-            timeoutText.style.position       = "absolute"
-            timeoutText.style.width          = elementDiv.style.width  ? elementDiv.style.width  : divComputedStyle.width; //"200px"
-            timeoutText.style.height         = elementDiv.style.height ? elementDiv.style.height : divComputedStyle.height; //"200px"
-            timeoutText.style.top            = top + "px";
-            timeoutText.style.left           = left + "px";
-            timeoutText.style.border         = "none";
-            timeoutText.style.color          = "rgb(255, 255, 255)";
-            timeoutText.style.backgroundColor= `rgba(0, 0, 0, ${alpha})`;
-            timeoutText.style.textAlign      = "center";
-            
-            apprunDiv.appendChild(timeoutText);
-
-            // if(isIOS())
-            // {
-            //     if(window.history.length > 1)
-            //     {
-            //         history.go(-(window.history.length - 1));        
-            //     }
-            //     else
-            //         window.location.replace("./playtimeout.html");
-            // }
-            // else
-            // {
-            //     window.location.replace("./playtimeout.html");
-            // }
-        }
-
-
-        //------------------------------------------------------------------------------
-        // launchNzPlayer
-        //! Start  webplayer
-        //!
-        //! @param [in] app             App to launch
-        //------------------------------------------------------------------------------
         function launchNzPlayer(app) {
-            let authId      = "get auth_id from Netzyn and put here";
+            let authId = "cloud";
             const appServer = "";
-            const extraParam= '';
-
-            console.log("launchNzPlayer Launching player for app: " + app );
+            const extraParam = '';
 
             window.removeEventListener("resize", detectRotationToLandscape);
             window.removeEventListener("resize", detectRotationToPortrait);
 
-            // start timeout to wait for APPACTIVE callback
-            g_WaitForAppActiveId = setTimeout(timeoutAppActive, g_WaitForAppActiveTimeout);
-
-            // Start NzPlayer in the div allocated for it to draw in
             NzPlayerWebBrowser(
                 appServer,
                 'where_to_put_the_video',
@@ -1104,9 +1049,6 @@
                 callbackWebPlayerStatus
             );
         }
-
-        startNzPlayer();
     </script>
 </body>
-
 </html>

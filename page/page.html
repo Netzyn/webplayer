@@ -320,20 +320,27 @@
 
                 case NZWEBPLAYER_APPACTIVE:
                     console.log("callbackPlayerStatus first video frame");
+                    if( data != null)
+                    {
+                        console.log("callbackPlayerStatus hostname      : ", data.hostname);
+                        console.log("callbackPlayerStatus websocketIp   : ", data.websocketIp);
+                        console.log("callbackPlayerStatus websocketPort : ", data.websocketPort);
+                        console.log("callbackPlayerStatus appName       : ", data.appName);
+                        console.log("callbackPlayerStatus oidsec        : ", data.oidsec);
+                    }
                     showStartButton();
                     break;
-
+                    
                 case NZWEBPLAYER_VERSION:
                     console.log("callbackPlayerStatus Version : " + data);
                     break;
 
-                // for this example we want to print/show something for all callbacks!
                 default:
                     alert("Unparsed callback id=" + statusId);
                     break;
             }
 
-            console.log("callbackWebPlayerStatus statusId=", NzPlayerWebBrowserCallbackToString(statusId), " (", statusId, "), bClose=", bClose);
+            console.log("callbackWebPlayerStatus statusId=", statusId, ", bClose=", bClose);
             if(bClose == true)
             {
                 window.close();
