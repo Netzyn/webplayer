@@ -1,90 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Netzyn Webplayer Launcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            text-align: center;
+            background-color: #f5f5f5;
+        }
+        
+        .app-section {
+            margin: 40px auto;
+            max-width: 300px;
+        }
+        
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .app-icon {
+            width: 128px;
+            height: 128px;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: transform 0.2s;
+        }
+        
+        .app-icon:hover {
+            transform: scale(1.05);
+        }
+        
+        a {
+            text-decoration: none;
+        }
+    </style>
 </head>
-
 <body>
-    <p style="font-size:30px;">App with no toolbar</p>
-    <a id="candy_page" target="_blank"><img src="https://www.cityam.com/wp-content/uploads/2023/09/CCS-Candies-Key-Art-4-3-Logo-e1695898049123.jpg" class="post-img" width="128" height="128"></a>
-    <br>
-    <br>
-    <p style="font-size:30px;">App with timer (swipe-to-play)</p>
-    <a id="candy_timer" target="_blank"><img src="https://www.cityam.com/wp-content/uploads/2023/09/CCS-Candies-Key-Art-4-3-Logo-e1695898049123.jpg" class="post-img" width="128" height="128"></a>
+    
+    <!-- APP WITH NO TOOLBAR (PAGE) -->
+    <div class="app-section">
+        <h2>No Toolbar (page.html)</h2>
+        <a href="https://nz-prod-web.nz-naas.com/webplayer/page/page.html?app=candycrush" target="_blank"></a>
+            <img src="assets/candycrush.png" class="app-icon" alt="Candy Crush">
+        </a>
+    </div>
 
-    <script>
-        // ============================================================================
-        // LAUNCHER - Constructs URLs for timer.html with all required parameters
-        // All parameters must be passed through - no fallbacks in timer.html
-        // ============================================================================
+    <!-- APP WITH TIMER (SWIPE-TO-PLAY) -->
+    <div class="app-section">
+        <h2>Toolbar (timer.html)</h2>
+        <a href="https://nz-prod-web.nz-naas.com/webplayer/timer/timer.html?app=candycrush&color=%23ff6b35&text=Candy%20Crush&icon=https://nzos.netzyn.com/files/icons/candycrush.png&orient=P&install=https://play.google.com/store/apps/details?id=com.king.candycrushsaga&install_ios=https://apps.apple.com/us/app/candy-crush-saga/id553834731" target="_blank">
+            <img src="assets/candycrush.png" class="app-icon" alt="Candy Crush">
+        </a>
+    </div>
 
-        // Read parameters from URL
-        const app = new URLSearchParams(window.location.search).get("app");
-        const appColor = new URLSearchParams(window.location.search).get("color");
-        const appText = new URLSearchParams(window.location.search).get("text");
-        const appIcon = new URLSearchParams(window.location.search).get("icon");
-        const install = new URLSearchParams(window.location.search).get("install");
-        const install_ios = new URLSearchParams(window.location.search).get("install_ios");
-        const orient = new URLSearchParams(window.location.search).get("orient");
-
-        // Validate required parameters
-        if (!app) {
-            alert("Error: 'app' parameter is required!");
-        }
-        if (!appColor) {
-            alert("Warning: 'color' parameter is missing!");
-        }
-        if (!appText) {
-            alert("Warning: 'text' parameter is missing!");
-        }
-        if (!appIcon) {
-            alert("Warning: 'icon' parameter is missing!");
-        }
-        if (!install) {
-            alert("Warning: 'install' parameter is missing!");
-        }
-        if (!install_ios) {
-            alert("Warning: 'install_ios' parameter is missing!");
-        }
-
-        // Determine orientation if not provided
-        const orientation = orient || (app && app.includes("_L") ? "L" : "P");
-
-        // ============================================================================
-        // SET URLS FOR LAUNCHER BUTTONS
-        // ============================================================================
-        function setUrls() {
-            console.log("Setting URLs for app:", app);
-
-            // Link for page without toolbar
-            var urlPage = document.getElementById("candy_page");
-            if (urlPage && app) {
-                var pageHref = '../page/page.html?app=' + encodeURIComponent(app) + 
-                    '&orient=' + orientation;
-                urlPage.setAttribute("href", pageHref);
-            }
-
-            // Link for timer (swipe-to-play with toolbar)
-            var urlTimer = document.getElementById("candy_timer");
-            if (urlTimer && app) {
-                var timerHref = '../timer/timer.html?app=' + encodeURIComponent(app) +
-                    '&orient=' + orientation +
-                    '&icon=' + encodeURIComponent(appIcon || '') +
-                    '&color=' + encodeURIComponent(appColor || '') +
-                    '&text=' + encodeURIComponent(appText || '') +
-                    '&install=' + encodeURIComponent(install || '') +
-                    '&install_ios=' + encodeURIComponent(install_ios || '');
-                urlTimer.setAttribute("href", timerHref);
-                
-                console.log("Timer URL:", timerHref);
-            }
-        }
-
-        setUrls();
-    </script>
 </body>
-
 </html>

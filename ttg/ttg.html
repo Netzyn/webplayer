@@ -208,7 +208,9 @@
                     	"Time2":"0",
                     	"storeand":"https://play.google.com/store/apps/details?id=com.dna.solitaireapp",
                     	"storeios":"https://apps.apple.com",
-                        "url": "solitare"
+                        "url": "solitare",
+                        "color": "#2E7D32",
+                        "icon": "https://nzos.netzyn.com/files/apps/solitare.png"
                     },
                     {
                         "stars": "4.6",
@@ -222,7 +224,9 @@
                         "Time2": "0",
                         "storeand": "https://play.google.com/store/apps/details?id=com.king.candycrushsaga",
                         "storeios": "https://apps.apple.com/us/app/candy-crush-saga/id553834731",
-                        "url": "candycrush"
+                        "url": "candycrush",
+                        "color": "#ff6b35",
+                        "icon": "https://nzos.netzyn.com/files/apps/candycrush.png"
                     },
                     {
                         // some random values
@@ -238,7 +242,9 @@
                     	"Time2":"0",
                     	"storeand":"https://play.google.com/store/apps/details?id=com.simplemobiletools.draw",
                     	"storeios":"https://apps.apple.com",
-                        "url": "draw"
+                        "url": "draw",
+                        "color": "#1976D2",
+                        "icon": "https://nzos.netzyn.com/files/apps/draw.png"
                     },
                     {
                         "stars": "3.6",
@@ -252,7 +258,10 @@
                         "Time2": "0",
                         "storeand": "https://play.google.com/store/apps/details?id=easy.sudoku.puzzle.solver.free",
                         "storeios": "https://apps.apple.com/us/app/sudoku-brain-puzzle-games/id1442749804",
-                        "url": "sudoku"
+                        "url": "sudoku",
+                        "color": "#5E35B1",
+                        "icon": "https://nzos.netzyn.com/files/apps/sudoku.png"
+
                     },
                     {
                         "stars": "4.6",
@@ -266,7 +275,9 @@
                         "Time2": "0",
                         "storeand": "https://play.google.com/store/apps/details?id=net.peakgames.toonblast&hl=en_US&gl=US",
                         "storeios": "https://apps.apple.com/us/app/toon-blast/id1176027022",
-                        "url": "toonblast"
+                        "url": "toonblast",
+                        "color": "#FF6F00",
+                        "icon": "https://nzos.netzyn.com/files/apps/toonblast.png"
                     },
                     {
                         "stars": "4.1",
@@ -280,7 +291,9 @@
                         "Time2": "0",
                         "storeand": "https://play.google.com/store/apps/details?id=com.hypercarrot.giantrush",
                         "storeios": "https://apps.apple.com/us/app/giant-rush/id1536131108",
-                        "url": "giantrush"
+                        "url": "giantrush",
+                        "color": "#43A047",
+                        "icon": "https://nzos.netzyn.com/files/apps/giantrush.png"
                     },
                     {
                         "stars": "4.4",
@@ -294,7 +307,9 @@
                         "Time2": "0",
                         "storeand": "https://play.google.com/store/apps/details?id=com.aquiris.horizonchase",
                         "storeios": "https://apps.apple.com/us/app/horizon-chase/id991018252",
-                        "url": "horizonchase_l"
+                        "url": "horizonchase_l",
+                        "color": "#D84315",
+                        "icon": "https://nzos.netzyn.com/files/apps/horizonchase_l.png"
                     }
 
                 ]
@@ -356,7 +371,7 @@
                     const tryNowButton = document.createElement("button");
                     tryNowButton.className = "button";
                     tryNowButton.textContent = "Try Now";
-                    tryNowButton.onclick = () => window.location.href = `../timer/timer.html?app=${encodeURIComponent(app.url)}&install=${app.storeand}&install_ios=${app.storeios}&back=true`;
+                    tryNowButton.onclick = () => window.location.href = `../timer/timer.html?app=${encodeURIComponent(app.url)}&color=${encodeURIComponent(app.color)}&text=${encodeURIComponent(app.name)}&icon=${encodeURIComponent(app.icon)}&orient=${app.orient}&install=${encodeURIComponent(app.storeand)}&install_ios=${encodeURIComponent(app.storeios)}&back=true`;
 
                     buttons.appendChild(installButton);
                     buttons.appendChild(tryNowButton);
