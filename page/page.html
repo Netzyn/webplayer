@@ -445,14 +445,6 @@
             // start timeout to wait for APPACTIVE callback
             g_WaitForAppActiveId = setTimeout(timeoutAppActive, g_WaitForAppActiveTimeout);
 
-            let data = {
-                hostname:       "www.bob.com",
-                websocketIp:    "192.168.1.67",
-                websocketPort:  "3000",
-                appName:        "pluto",
-                oidsec:         "0-1-2-3",
-            };                            
-
             NzPlayerWebBrowser(
                 appServer, 
                 'where_to_put_the_video', 
@@ -461,8 +453,7 @@
                 encodeURIComponent(authId), 
                 encodeURIComponent(getUserName()), 
                 encodeURIComponent(extraParam), 
-                callbackWebPlayerStatus,
-                data
+                callbackWebPlayerStatus
             );
         }
 
